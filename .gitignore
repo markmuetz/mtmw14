@@ -1,0 +1,17 @@
+stormtracks/settings/settings.py
+.*.swp
+*.pyc
+*.dat
+*.o
+*.so
+*/tags
+logs/
+docs/logs
+.idea/
+build/
+dist/
+docs/_build
+st_env/
+stormtracks.egg-info/
+wheelhouse/
+MANIFEST
