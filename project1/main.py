@@ -60,7 +60,7 @@ if __name__ == '__main__':
 	tau=12/sim.TIME_SCALE # N.B. non-dimensionalised
 	tau_cor=1/30/sim.TIME_SCALE # N.B. non-dimensionalised
 	settings = sim.init_settings(epsilon=0.1, mu0=0.75, mu_ann=0.2, tau=tau,
-				     f_ann=0.02, f_ran=0.2, tau_cor=tau_cor
+				     f_ann=0.02, f_ran=0.2, tau_cor=tau_cor,
 		                     mode='annual_cycle')
 	plot_output(*sim.enso_oscillator(one_period * 4, nt, **settings))
 	raw_input('Press enter to continue')
