@@ -1,10 +1,11 @@
-stormtracks/settings/settings.py
 .*.swp
 *.pyc
 *.dat
 *.o
 *.so
 */tags
+.ipynb_checkpoints/
+JSAnimation
 logs/
 docs/logs
 .idea/
