@@ -12,16 +12,15 @@ def init_settings(**kwargs):
     # Initial settings.
     # TODO: Comment and add units.
     settings = dict(
-        # base settings.
-        T0=1.125, # init. temperature, K
-        h0=0, # init. thermocline depth, m
-        # Following are non-dimensional:
+        # Base settings. Following are non-dimensional:
+        T0=1.125/T_SCALE, # init. temperature
+        h0=0/H_SCALE, # init. thermocline depth
         mu0=2/3, # relative coupling coefficient
         b0=2.5, # coupling parameter
         gamma=0.75,  # thermocline/SST gradient feedback
         c=1, # SST anomaly damping rate
         r=0.25, # damping of upper ocean heat content
-        alpha=0.125, # 
+        alpha=0.125, 
         epsilon=0, 
         # annual_cycle settings.
         mu_ann=0, 
@@ -32,35 +31,40 @@ def init_settings(**kwargs):
         f_ran=0, 
         # control.
         mode='base', 
-        method='rk4',
+        scheme='rk4',
         debug=False)
-    print('setting: ', end='')
-    for key, value in kwargs.iteritems():
-	if key not in settings:
-	    raise ValueError('key {} not recognised'.format(key))
-	print('{}={}, '.format(key, value), end='')
-	settings[key] = value
-    print('')
+
+    if kwargs:
+        print('setting: ', end='')
+        for key, value in kwargs.iteritems():
+            if key not in settings:
+                raise ValueError('key {} not recognised'.format(key))
+            print('{}={}, '.format(key, value), end='')
+            settings[key] = value
+        print('')
     return settings
 
 
-def fT(t, T, h, R, gamma, epsilon, b, xi):
+def print_settings(settings, keys):
+    for key in keys:
+        print('{}: {}'.format(key, settings[key]))
+
+
+def fT(T, h, R, gamma, epsilon, b, xi):
     return R * T + gamma * h - epsilon * (h + b * T)**3 + gamma * xi
 
 
-def fh(t, T, h, r, alpha, b, xi):
+def fh(T, h, r, alpha, b, xi):
     return -r * h - alpha * b * T - alpha * xi
 
 
 def enso_oscillator(timelength, nt, 
                     T0, h0, mu0, b0, gamma, c, r, alpha, epsilon, # base
                     mu_ann, tau, tau_cor, f_ann, f_ran, xi, # annual_cycle
-                    mode='base', method='rk4', debug=False):
-    # Non-dimensionalise time, T and h:
-    timelength_non_dim = timelength / TIME_SCALE
-    T, h = T0/T_SCALE, h0/H_SCALE
+                    mode='base', scheme='rk4', debug=False):
+    T, h = T0, h0
 
-    timesteps = np.linspace(0, timelength_non_dim, nt)
+    timesteps = np.linspace(0, timelength, nt)
     dt = timesteps[1] - timesteps[0]
     Ts, hs = [T], [h]
 
@@ -68,15 +72,14 @@ def enso_oscillator(timelength, nt,
     if mode == 'annual_cycle':
         W = random.uniform(-1, 1)
         t_last = 0
-    else:
-        b = b0 * mu
-        R = gamma * b - c
 
-    if method == 'bt':
+    if scheme == 'bt':
         # Backward time, implicit.
         # TODO won't work unless mode == 'base'.
         if mode != 'base':
-            raise ValueError("Cannot use method='bt' with mode!='base'")
+            raise ValueError("Cannot use scheme='bt' with mode!='base'")
+        b = b0 * mu
+        R = gamma * b - c
         X = np.array([T, h])
         M = np.array([[1 - dt * R, -dt * gamma], [dt * alpha * b, 1 + dt * r]])
 
@@ -88,51 +91,58 @@ def enso_oscillator(timelength, nt,
             if t - t_last >= tau_cor:
                 W = random.uniform(-1, 1)
                 t_last = t
-		if debug:
-		    print('Setting W={}'.format(W))
+                if debug:
+                    print('Setting W={}'.format(W))
             mu = mu0 * (1 + mu_ann * np.cos(2 * np.pi * t / tau - 5 * np.pi / 6))
-            b = b0 * mu
-            R = gamma * b - c
             xi = f_ann * np.cos(2 * np.pi / tau) + f_ran * W * tau_cor/dt
+        b = b0 * mu
+        R = gamma * b - c
 
-        if method == 'ft':
+        if scheme == 'ft':
             # Forward time, explicit.
-            T = T + dt * fT(t, T, h, R, gamma, epsilon, b, xi)
-            h = h - dt * fh(t, T, h, r, alpha, b, xi)
+            T = T + dt * fT(T, h, R, gamma, epsilon, b, xi)
+            h = h + dt * fh(T, h, r, alpha, b, xi)
             Ts.append(T)
             hs.append(h)
-        elif method == 'bt':
+        elif scheme == 'bt':
             # Backward time, implicit.
             X = solve(M, X)
             Ts.append(X[0])
             hs.append(X[1])
-        elif method == 'rk4':
+        elif scheme == 'rk4':
             # RK4.
-            k1 = fT(t, T, h, R, gamma, epsilon, b, xi)
-            l1 = fh(t, T, h, r, alpha, b, xi)
+            k1 = fT(T, h, R, gamma, epsilon, b, xi)
+            l1 = fh(T, h, r, alpha, b, xi)
 
-            k2 = fT(t + dt/2, T + dt/2 * k1, h + dt/2 * l1, R, gamma, epsilon, b, xi)
-            l2 = fh(t + dt/2, T + dt/2 * k1, h + dt/2 * l1, r, alpha, b, xi)
+            k2 = fT(T + dt/2 * k1, h + dt/2 * l1, R, gamma, epsilon, b, xi)
+            l2 = fh(T + dt/2 * k1, h + dt/2 * l1, r, alpha, b, xi)
 
-            k3 = fT(t + dt/2, T + dt/2 * k2, h + dt/2 * l2, R, gamma, epsilon, b, xi)
-            l3 = fh(t + dt/2, T + dt/2 * k2, h + dt/2 * l2, r, alpha, b, xi)
+            k3 = fT(T + dt/2 * k2, h + dt/2 * l2, R, gamma, epsilon, b, xi)
+            l3 = fh(T + dt/2 * k2, h + dt/2 * l2, r, alpha, b, xi)
 
-            k4 = fT(t + dt, T + dt * k3, h + dt * l3, R, gamma, epsilon, b, xi)
-            l4 = fh(t + dt, T + dt * k3, h + dt * l3, r, alpha, b, xi)
+            k4 = fT(T + dt * k3, h + dt * l3, R, gamma, epsilon, b, xi)
+            l4 = fh(T + dt * k3, h + dt * l3, r, alpha, b, xi)
 
             T = T + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
             h = h + dt/6 * (l1 + 2*l2 + 2*l3 + l4)
 
             Ts.append(T)
             hs.append(h)
+        else:
+            raise ValueError('Unrecognized scheme: {}'.format(scheme))
 
-    # Redimensionalise before returning.
-    return timesteps * TIME_SCALE, np.array(Ts) * T_SCALE, np.array(hs) * H_SCALE
+    return timesteps, np.array(Ts), np.array(hs)
 
 
-def ensemble(settings, h0_min=-0.1, h0_max=0.1, n=100):
-    for h0 in np.linspace(h0_min, h0_max, n):
-        print(h0)
-	settings['h0'] = h0
-        ts, Ts, hs = enso_oscillator(41*4, nt=1000, **settings)
-        # plt.plot(ts, Ts[1:])
+def run_enso_ensemble(timelength, nt, tau, tau_cor, 
+                      h0_min=-0.05, h0_max=0.05, nh=21):
+    settings = init_settings(epsilon=0.1, mu0=0.75, mu_ann=0.2, tau=tau,
+                             f_ann=0.02, f_ran=0.2, tau_cor=tau_cor,
+                             mode='annual_cycle', debug=False)
+    results = []
+    results.append(enso_oscillator(timelength, nt, **settings))
+    for h0 in np.linspace(h0_min, h0_max, nh):
+        print('{}, '.format(h0), end='')
+        settings['h0'] = h0
+        results.append((enso_oscillator(timelength, nt, **settings)))
+    return results
