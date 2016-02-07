@@ -134,15 +134,18 @@ def enso_oscillator(timelength, nt,
     return timesteps, np.array(Ts), np.array(hs)
 
 
-def run_enso_ensemble(timelength, nt, tau, tau_cor, 
-                      h0_min=-0.05, h0_max=0.05, nh=21):
-    settings = init_settings(epsilon=0.1, mu0=0.75, mu_ann=0.2, tau=tau,
-                             f_ann=0.02, f_ran=0.2, tau_cor=tau_cor,
-                             mode='annual_cycle', debug=False)
+def run_enso_ensemble(timelength, nt, settings, 
+                      h0_min=-0.05, h0_max=0.05, nh=21,
+                      reseed=False):
     results = []
+    if reseed:
+        seed = random.uniform(0, 1e9)
+        random.seed(seed)
     results.append(enso_oscillator(timelength, nt, **settings))
     for h0 in np.linspace(h0_min, h0_max, nh):
         print('{}, '.format(h0), end='')
         settings['h0'] = h0
+        if reseed:
+            random.seed(seed)
         results.append((enso_oscillator(timelength, nt, **settings)))
     return results
