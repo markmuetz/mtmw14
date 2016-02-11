@@ -135,7 +135,8 @@ def enso_oscillator(timelength, nt,
 
 
 def run_enso_ensemble(timelength, nt, settings, 
-                      h0_min=-0.05, h0_max=0.05, nh=21,
+                      h0_min=-0.05, h0_max=0.05, nh=5,
+                      T0_min=1/T_SCALE, T0_max=1.5/T_SCALE, nT=5,
                       reseed=False):
     results = []
     if reseed:
@@ -143,9 +144,11 @@ def run_enso_ensemble(timelength, nt, settings,
         random.seed(seed)
     results.append(enso_oscillator(timelength, nt, **settings))
     for h0 in np.linspace(h0_min, h0_max, nh):
-        print('{}, '.format(h0), end='')
-        settings['h0'] = h0
-        if reseed:
-            random.seed(seed)
-        results.append((enso_oscillator(timelength, nt, **settings)))
+        for T0 in np.linspace(T0_min, T0_max, nT):
+            print('({}, {}), '.format(h0, T0), end='')
+            settings['h0'] = h0
+            settings['T0'] = T0
+            if reseed:
+                random.seed(seed)
+            results.append((enso_oscillator(timelength, nt, **settings)))
     return results
