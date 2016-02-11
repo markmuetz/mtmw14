@@ -3,6 +3,7 @@ import sys
 from collections import OrderedDict
 
 import numpy as np
+import pylab as plt
 
 import ensosim as sim
 from ensoplot import plot_output, clear_plots
@@ -10,6 +11,7 @@ from ensoplot import plot_output, clear_plots
 if __name__ == '__main__':
     # Allows easy running of individual tasks by e.g. python main.py A B
     # defaults to all.
+    plt.ion()
     if len(sys.argv) == 1:
         tasks = OrderedDict(A=True, B=True, C=True, D=True, E=True, F=True)
     else:
