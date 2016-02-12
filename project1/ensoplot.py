@@ -1,9 +1,11 @@
+'''Plotting tools'''
 from itertools import cycle
 
 import pylab as plt
 
 import ensosim
 
+# Picks a cyclical colour.
 cycol = cycle('bgrcmkyw').next
 
 def clear_plots():
@@ -13,6 +15,8 @@ def clear_plots():
     plt.clf()
 
 def plot_output(ts, Ts, hs, ylim=None, colour=None, clear=True):
+    '''Takes non-dimensional values of time, T and h and plots them.
+    Can be used to overlay plots if clear=False'''
     # Re-dimensionalise:
     ts = ts * ensosim.TIME_SCALE
     Ts = Ts * ensosim.T_SCALE
@@ -49,6 +53,7 @@ def plot_output(ts, Ts, hs, ylim=None, colour=None, clear=True):
 
 
 def plot_ensemble_output(ensemble_results):
+    '''Loop over all ensemble results and plot each one'''
     plot_output(*ensemble_results[0], ylim=(-80, 80))
     for result in ensemble_results[1:]:
         plot_output(*result, ylim=(-80, 80), clear=False)

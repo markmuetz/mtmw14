@@ -1,3 +1,4 @@
+'''Script that can be run from command line/ipython for debugging'''
 from __future__ import division
 import sys
 from collections import OrderedDict
