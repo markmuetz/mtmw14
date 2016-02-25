@@ -34,42 +34,42 @@ def gyre_sim(eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, tau0, 
     tau_y = 0
     for i, t in enumerate(times):
         print(t)
-        eta = eta - H * dt * ((np.roll(u, -1, axis=1) - u)/ dx + 
-                              (np.roll(v, -1, axis=0) - v)/ dy)
-        if i % 2 == 0:
-            v_u = (v + np.roll(v, -1, axis=0) + np.roll(v, 1, axis=1) + 
-                   np.roll(np.roll(v, -1, axis=0), 1, axis=1)) / 4
-            u = (u + (f0 + B * y) * dt * v_u - 
-                 g * dt / dx * (eta - np.roll(eta, 1, axis=1)) -
-                 gamma * dt * u +
-                 tau_x * dt / (rho * H))
-            u_v = (u + np.roll(u, -1, axis=0) + np.roll(u, 1, axis=1) + 
-                   np.roll(np.roll(u, -1, axis=0), 1, axis=1)) / 4
-            v = (v - (f0 + B * y) * dt * u_v - 
-                 g * dt / dy * (eta - np.roll(eta, 1, axis=0)) -
-                 gamma * dt * v +
-                 tau_y * dt / (rho * H))
-        else:
-            u_v = (u + np.roll(u, -1, axis=0) + np.roll(u, 1, axis=1) + 
-                   np.roll(np.roll(u, -1, axis=0), 1, axis=1)) / 4
-            v = (v - (f0 + B * y) * dt * u_v - 
-                 g * dt / dy * (eta - np.roll(eta, 1, axis=0)) -
-                 gamma * dt * v +
-                 tau_y * dt / (rho * H))
-            v_u = (v + np.roll(v, -1, axis=0) + np.roll(v, 1, axis=1) + 
-                   np.roll(np.roll(v, -1, axis=0), 1, axis=1)) / 4
-            u = (u + (f0 + B * y) * dt * v_u - 
-                 g * dt / dx * (eta - np.roll(eta, 1, axis=1)) -
-                 gamma * dt * u +
-                 tau_x * dt / (rho * H))
+        eta = eta - H * dt * ((np.roll(u, -1, axis=0) - u)/ dx + 
+                              (np.roll(v, -1, axis=1) - v)/ dy)
+        for j in range(2):
+            if (i + j) % 2 == 0:
+                v_u = (v + np.roll(v, -1, axis=1) + np.roll(v, 1, axis=0) + 
+                       np.roll(np.roll(v, -1, axis=1), 1, axis=0)) / 4
+                u = (u + (f0 + B * y) * dt * v_u - 
+                     g * dt / dx * (eta - np.roll(eta, 1, axis=0)) -
+                     gamma * dt * u +
+                     tau_x * dt / (rho * H))
+            else:
+                u_v = (u + np.roll(u, -1, axis=1) + np.roll(u, 1, axis=0) + 
+                       np.roll(np.roll(u, -1, axis=1), 1, axis=0)) / 4
+                v = (v - (f0 + B * y) * dt * u_v - 
+                     g * dt / dy * (eta - np.roll(eta, 1, axis=1)) -
+                     gamma * dt * v +
+                     tau_y * dt / (rho * H))
+        # Kinematic BCs: no normal flow.
+        u[0, :] = 0
+        u[-1, :] = 0
+        v[:, 0] = 0
+        v[:, -1] = 0
 
-        if i % 10 == 0:
+        eta[0, :] = 0
+        eta[-1, :] = 0
+        eta[:, 0] = 0
+        eta[:, -1] = 0
+
+        if i % 1000 == 0:
             plt.clf()
             plt.title('u')
             cs = plt.contour(x, y, u)
             plt.clabel(cs, inline=1, fontsize=10)
             plt.pause(0.1)
-            r = raw_input()
+            #r = raw_input()
+            r = 'c'
             if r == 'q':
                 break
 
@@ -81,7 +81,7 @@ def gyre_sim(eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, tau0, 
 
 
 
-def analytical_steady_state(x, y, f0, B, g, gamma, rho, H, tau0):
+def analytical_steady_state(x, y, L, f0, B, g, gamma, rho, H, tau0):
     epsilon = gamma / (L * B)
     a = (-1 - np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
     b = (-1 + np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
@@ -112,7 +112,7 @@ def analytical_steady_state(x, y, f0, B, g, gamma, rho, H, tau0):
 if __name__ == '__main__':
     plt.ion()
     settings = init_settings()
-    nx, ny = 500, 500
+    nx, ny = 100, 100
     L = 1e6
     x = np.linspace(0, L, nx)
     y = np.linspace(0, L, ny)
@@ -133,8 +133,8 @@ if __name__ == '__main__':
         cs = plt.contour(x, y, v_st)
         plt.clabel(cs, inline=1, fontsize=10)
     else:
-        timelength = 86400
-        nt = 2000
+        timelength = 86400 * 30
+        nt = 200000
         eta0 = np.zeros_like(x)
         u0 = np.zeros_like(x)
         v0 = np.zeros_like(x)
