@@ -17,14 +17,18 @@ def init_settings(**kwargs):
     settings['H'] = 1e3 # m
     settings['tau0'] = 0.2 # N m^-2
     settings['L'] = 1e6 # m
+    settings['plot'] = False
     return settings
 
 
-def gyre_sim(t0, eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, tau0, L):
+def energy(eta, u, v, rho, H, g, dx, dy):
+    E = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
+    return E
+
+def gyre_sim(t0, eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, tau0, L, plot):
     eta = eta0
     u = u0
     v = v0
-    #etas, us, vs = [eta0], [u0], [v0]
     times = np.linspace(t0, t0 + timelength, nt + 1)
     dt = times[1] - times[0]
     dx = x[1, 0] - x[0, 0]
@@ -41,15 +45,16 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, ta
     #if phi > 1:
         #print('Warning, runnint with phi={} (>1)'.format(phi))
     tau_x = - tau0 * np.cos(np.pi * y / L)
-    #plt.figure('wind')
-    #plt.clf()
-    #plt.contour(x, y, tau_x)
     tau_y = np.zeros_like(y)
 
     v_u = np.zeros_like(u0)
     u_v = np.zeros_like(v0)
 
-    for i, t in enumerate(times):
+    u_grid = (u[:-1, :] + u[1:, :]) / 2
+    v_grid = (v[:, :-1] + v[:, 1:]) / 2
+    Es = [energy(eta, u_grid, v_grid, rho, H, g, dx, dy)]
+
+    for i, t in enumerate(times[1:]):
         eta = eta - H * dt * ((u[1:, :] - u[:-1, :]) / dx + 
                               (v[:, 1:] - v[:, :-1]) / dy)
         for j in range(2):
@@ -75,36 +80,28 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, ta
             v[:, 0] = 0
             v[:, -1] = 0
 
-        #eta[0, :] = 0
-        #eta[-1, :] = 0
-        #eta[:, 0] = 0
-        #eta[:, -1] = 0
+        u_grid = (u[:-1, :] + u[1:, :]) / 2
+        v_grid = (v[:, :-1] + v[:, 1:]) / 2
+        Es.append(energy(eta, u_grid, v_grid, rho, H, g, dx, dy))
 
-        if i % 100 == 0:
-            print('{}: u min,max={},{}'.format(t, u.min(), u.max()))
-            u_grid = (u[:-1, :] + u[1:, :]) / 2
-            v_grid = (v[:, :-1] + v[:, 1:]) / 2
-            plt.figure(1)
-            plt.clf()
-            cs = plt.contour(x, y, u_grid)
-            plt.figure(2)
-            plt.clf()
-            cs = plt.contour(x, y, v_grid)
-            plt.figure(3)
-            plt.clf()
-            plt.quiver(x[::5, ::5], y[::5, ::5], u_grid[::5, ::5], v_grid[::5, ::5])
-            plt.pause(0.01)
-            r = 'c'
-            if r == 'q':
-                break
+        if i % 1000 == 0:
+            print('{}: energy={}'.format(t, Es[-1]))
+            if plot:
+                plt.figure(1)
+                plt.clf()
+                cs = plt.contour(x, y, u_grid)
+                plt.figure(2)
+                plt.clf()
+                cs = plt.contour(x, y, v_grid)
+                plt.figure(3)
+                plt.clf()
+                plt.quiver(x[::5, ::5], y[::5, ::5], u_grid[::5, ::5], v_grid[::5, ::5])
+                plt.pause(0.01)
 
-        #etas.append(eta)
-        #us.append(u)
-        #vs.append(v)
-    return eta, u, v
+    return times, eta, u, v, Es
 
 
-def analytical_steady_state(x, y, L, f0, B, g, gamma, rho, H, tau0):
+def analytical_steady_state(eta0, x, y, L, f0, B, g, gamma, rho, H, tau0, plot):
     epsilon = gamma / (L * B)
     a = (-1 - np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
     b = (-1 + np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
@@ -118,8 +115,6 @@ def analytical_steady_state(x, y, L, f0, B, g, gamma, rho, H, tau0):
         return (((np.exp(a) - 1) * b * np.exp(b * x) + 
                 (1 - np.exp(b)) * a * np.exp(a * x)) /
                      (np.exp(b) - np.exp(a)))
-    eta0 = 0
-
     u_st = (- tau0 / (np.pi * gamma * rho * H) *
             + f1(x / L) * np.cos(np.pi * y / L))
     v_st = (+ tau0 / (np.pi * gamma * rho * H) * 
@@ -130,18 +125,11 @@ def analytical_steady_state(x, y, L, f0, B, g, gamma, rho, H, tau0):
                  + (np.sin(np.pi * y / L) * (1 + B * y / f0) 
                  + B * L / (f0 * np.pi) * np.cos(np.pi * y / L))))
 
-    return u_st, v_st, eta_st
+    return eta_st, u_st, v_st 
 
-if __name__ == '__main__':
-    plt.ion()
-    settings = init_settings()
-    nx, ny = 51, 51
-    L = 1e6
-    x = np.linspace(0, L, nx)
-    y = np.linspace(0, L, ny)
-    x, y = np.meshgrid(x, y, indexing='ij')
-    if False:
-        u_st, v_st, eta_st = analytical_steady_state(x=x, y=y, **settings)
+def calc_analytical(eta0, x, y, **settings):
+    eta_st, u_st, v_st = analytical_steady_state(eta0=eta0, x=x, y=y, **settings)
+    if settings['plot']:
         plt.figure(21)
         plt.clf()
         plt.title('u')
@@ -155,17 +143,87 @@ if __name__ == '__main__':
         plt.clabel(cs, inline=1, fontsize=10)
         plt.clf()
         plt.quiver(x[::5, ::5], y[::5, ::5], u_st[::5, ::5], v_st[::5, ::5])
-    else:
-        timelength = 86400 * 30
-        #nt = 8640 * 2 * 1
-        nt = 8640 * 2 * 3
+
+    return eta_st, u_st, v_st
+
+def analyse_results(results):
+    # After 1 day:
+    x, y = results[2]['grid'][0], results[2]['grid'][1]
+    eta = results[2]['sim'][1]
+    u, v = results[2]['sim'][2], results[2]['sim'][3]
+
+    plt.figure(91)
+    plt.clf()
+    plt.title('u vs x southern edge')
+    plt.plot(x[:, 0], (u[:-1, 0] + u[1:, 0]) / 2)
+
+    plt.figure(92)
+    plt.clf()
+    plt.title('v vs y western edge')
+    plt.plot(y[0, :], (v[0, :-1] + v[0, 1:])/ 2)
+
+    plt.figure(93)
+    plt.clf()
+    plt.title('$\eta$ vs x middle')
+    plt.plot(x[:, 0], eta[:, eta.shape[1]/2])
+
+    plt.figure(94)
+    plt.clf()
+    plt.title('Contour plot of $\eta$')
+    cs = plt.contour(x, y, eta)
+    plt.clabel(cs, inline=1, fontsize=10)
+
+    plt.figure(95)
+    plt.clf()
+    plt.title('Energy vs time')
+    plt.plot(results[0]['sim'][0], results[0]['sim'][4], 
+             label=results[0]['res'])
+    plt.plot(results[1]['sim'][0], results[1]['sim'][4], 
+             label=results[1]['res'])
+    print('{}: energy_diff={}'.format(results[0]['res'], results[0]['energy_diff']))
+    print('{}: energy_diff={}'.format(results[1]['res'], results[1]['energy_diff']))
+
+
+if __name__ == '__main__':
+    plt.ion()
+    settings = init_settings()
+    L = settings['L']
+
+    results = []
+    for timelength, nx, nt in [(86400 * 50, 51, 8640 * 1.42 * 5),
+                               (86400 * 50, 101, 8640 * 2 * 5 * 1.42),
+                               (86400, 51, 864 * 1.42)]:
+        ny = nx
+        x = np.linspace(0, L, nx)
+        y = np.linspace(0, L, ny)
+        dx = x[1] - x[0]
+        dy = y[1] - y[0]
+
+        x, y = np.meshgrid(x, y, indexing='ij')
+
         eta0 = np.zeros_like(x)
         u0 = np.zeros((x.shape[0] + 1, x.shape[1]))
         v0 = np.zeros((x.shape[0], x.shape[1] + 1))
-        #settings['f0'] = 0
-        #settings['B'] = 0
+
         #gyre_sim_jit = autojit(gyre_sim)
-        #settings['tau0'] = 20.
+        times, eta, u, v, Es = gyre_sim(0, eta0, u0, v0, timelength, nt, x, y, **settings)
 
-        eta, u, v = gyre_sim(0, eta0, u0, v0, timelength, nt, x, y, **settings)
+        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], x, y, **settings)
 
+        u_grid = (u[:-1, :] + u[1:, :]) / 2
+        v_grid = (v[:, :-1] + v[:, 1:]) / 2
+
+        up = u_grid - u_st
+        vp = v_grid - v_st
+        etap = eta - eta_st
+        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], dx, dy)
+        result = {}
+        result['sim'] = (times, eta, u, v, Es)
+        result['ana'] = (eta_st, u_st, v_st)
+        result['res'] = 'energy_{}x{}'.format(nx, ny)
+        result['grid'] = (x, y)
+        result['energy_diff'] = E
+
+        results.append(result)
+
+    analyse_results(results)
