@@ -3,8 +3,9 @@ will allow me to work out CFL conditions. This will be the phase speed of the
 gravity waves.'''
 import numpy as np
 import pylab as plt
+import scipy.interpolate as interp
 
-from numba.decorators import jit, autojit                             
+#from numba.decorators import jit, autojit                             
 
 
 def init_settings(**kwargs):
@@ -24,6 +25,111 @@ def init_settings(**kwargs):
 def energy(eta, u, v, rho, H, g, dx, dy):
     E = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
     return E
+
+def gyre_sim_semi_lag(t0, h0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, tau0, L, plot):
+    h = h0
+    u = u0
+    v = v0
+
+    times = np.linspace(t0, t0 + timelength, nt + 1)
+    dt = times[1] - times[0]
+
+    u00 = np.zeros((X.shape[0] + 1, X.shape[1]))
+    v00 = np.zeros((X.shape[0], X.shape[1] + 1))
+
+    _, h1, u1, v1, Es =  gyre_sim(t0, h0, u00, v00, dt, 1, X, Y, f0, B, g, gamma, rho, H, tau0, L, plot)
+    u1 = (u1[:-1, :] + u1[1:, :]) / 2
+    v1 = (v1[:, :-1] + v1[:, 1:]) / 2
+
+    dt = times[1] - times[0]
+    dx = X[1, 0] - X[0, 0]
+    dy = Y[0, 1] - Y[0, 0]
+    x, y = X[:, 0], Y[0, :]
+    print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
+
+    tau_x = - tau0 * np.cos(np.pi * Y / L)
+    tau_y = np.zeros_like(Y)
+
+    for step, t in enumerate(times[2:]):
+        # Work out u, v, at n+1/2.
+        u0p5 = 1.5 * u1 - 0.5 * u0
+        v0p5 = 1.5 * v1 - 0.5 * v0
+
+        # Calc intermediate x, y.
+        xi1 = x - u1 * dt/2
+        yi1 = y - v1 * dt/2
+
+        # Work out interp'd u, v at n+1/2
+        ui0p5 = interp.RectBivariateSpline(x, y, u0p5).ev(xi1, yi1)
+        vi0p5 = interp.RectBivariateSpline(x, y, v0p5).ev(xi1, yi1)
+
+        # Calc x dep at n
+        xd1 = X - ui0p5 * dt
+        yd1 = Y - vi0p5 * dt
+        
+        # Calc intermediate x, y (for n-1).
+        xi2 = X - u0 * dt
+        yi2 = Y - v0 * dt
+
+        # Interp u at n to new u.
+        ui0 = interp.RectBivariateSpline(x, y, u1).ev(xi2, yi2)
+        vi0 = interp.RectBivariateSpline(x, y, v1).ev(xi2, yi2)
+
+        # Calc x dep at n-1.
+        xd0 = X - ui0 * 2 * dt
+        yd0 = Y - vi0 * 2 * dt
+
+        # Calc u- etc at n-1.
+        u_minus = interp.RectBivariateSpline(x, y, u0).ev(xd0, yd0)
+        v_minus = interp.RectBivariateSpline(x, y, v0).ev(xd0, yd0)
+        h_minus = interp.RectBivariateSpline(x, y, h0).ev(xd0, yd0)
+
+        # Calc u0 etc at n.
+        u_0 = interp.RectBivariateSpline(x, y, u1).ev(xd1, yd1)
+        v_0 = interp.RectBivariateSpline(x, y, v1).ev(xd1, yd1)
+        h_0 = interp.RectBivariateSpline(x, y, h1).ev(xd1, yd1)
+
+        # Calc du/dx, du/dy at n, interp x, y dep at n.
+        dudx = (np.roll(u1, -1, axis=0) - np.roll(u1, 1, axis=0)) / (2 * dx)
+        dudx0 = interp.RectBivariateSpline(x, y, dudx).ev(xd1, yd1)
+
+        dvdy = (np.roll(v, -1, axis=0) - np.roll(v, 1, axis=0)) / (2 * dy)
+        dvdy0 = interp.RectBivariateSpline(x, y, dvdy).ev(xd1, yd1)
+
+        # Calc h derivs at n.
+        dhdx = (np.roll(h1, -1, axis=0) - np.roll(h1, 1, axis=0)) / (2 * dx)
+        dhdy = (np.roll(h1, -1, axis=1) - np.roll(h1, 1, axis=1)) / (2 * dy)
+        # Interp x, y dep using h derivs.
+        dhdx0 = interp.RectBivariateSpline(x, y, dhdx).ev(xd1, yd1)
+        dhdy0 = interp.RectBivariateSpline(x, y, dhdy).ev(xd1, yd1)
+
+        # Update h.
+        h_plus = h_minus - h_0 * 2 * dt * (dudx0 + dvdy0)
+        # Update u, v.
+        u_plus = u_minus - 2 * dt * g * dhdx0
+        v_plus = v_minus - 2 * dt * g * dhdy0
+
+        # Cascade values down.
+        h0, u0, v0 = h1, u1, v1
+        h1, u1, v1 = h_plus, u_plus, v_plus
+
+        if step % 1 == 0:
+            print('{}'.format(t))
+            if plot:
+                #plt.figure(1)
+                #plt.clf()
+                #cs = plt.contour(X, Y, u_plus)
+                #plt.figure(2)
+                #plt.clf()
+                #cs = plt.contour(X, Y, v_plus)
+                plt.figure(3)
+                plt.clf()
+                plt.quiver(X[::5, ::5], Y[::5, ::5], u_plus[::5, ::5], v_plus[::5, ::5])
+                plt.pause(0.01)
+                raw_input()
+
+    return times, h, u, v
+
 
 def gyre_sim(t0, eta0, u0, v0, timelength, nt, x, y, f0, B, g, gamma, rho, H, tau0, L, plot):
     eta = eta0
@@ -184,8 +290,7 @@ def analyse_results(results):
     print('{}: energy_diff={}'.format(results[1]['res'], results[1]['energy_diff']))
 
 
-if __name__ == '__main__':
-    plt.ion()
+def TaskABC():
     settings = init_settings()
     L = settings['L']
 
@@ -227,3 +332,30 @@ if __name__ == '__main__':
         results.append(result)
 
     analyse_results(results)
+
+
+def TaskD():
+    settings = init_settings()
+    settings['plot'] = True
+    L = settings['L']
+
+    results = []
+    for timelength, nx, nt in [(500, 51, 50)]:
+        ny = nx
+        x = np.linspace(0, L, nx)
+        y = np.linspace(0, L, ny)
+        dx = x[1] - x[0]
+        dy = y[1] - y[0]
+
+        x, y = np.meshgrid(x, y, indexing='ij')
+
+        h0 = np.zeros_like(x)
+        u0 = np.zeros_like(x)
+        v0 = np.zeros_like(x)
+
+        times, h, u, v = gyre_sim_semi_lag(0, h0, u0, v0, timelength, nt, x, y, **settings)
+
+if __name__ == '__main__':
+    plt.ion()
+    #TaskABC()
+    TaskD()
