@@ -86,19 +86,41 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
         # Calc intermediate x, y.
         u_grid = (u[:-1, :] + u[1:, :]) / 2
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Xi1 = X - u_grid * dt/2
-        Yi1 = Y - v_grid * dt/2
+        Xi = X - u_grid * dt/2
+        Yi = Y - v_grid * dt/2
+
+	v_u[1:-1, :] = (v[:-1, :-1] + v[1:, :-1] +
+			v[-1:, 1:] + v[1:, 1:]) / 4
+	u_v[:, 1:-1] = (u[:-1, :-1] + u[1:, :-1] +
+			u[:-1, 1:] + u[1:, 1:]) / 4
+        Xi_u = X_u - u * dt/2
+        Yi_u = Y_u - v_u * dt/2
+
+        Xi_v = X_v - u_v * dt/2
+        Yi_v = Y_v - v * dt/2
 
         # Work out interp'd u, v at n+1/2
-        ui0p5 = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi1, Yi1)
-        vi0p5 = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi1, Yi1)
+        ui0p5 = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi, Yi)
+        vi0p5 = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi, Yi)
+
+        ui0p5_u = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_u, Yi_u)
+        vi0p5_u = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_u, Yi_u)
+
+        ui0p5_v = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_v, Yi_v)
+        vi0p5_v = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_v, Yi_v)
 
         # Calc x dep at n
         Xd = X - ui0p5 * dt
         Yd = Y - vi0p5 * dt
 
-        u_tilde = interp.RectBivariateSpline(x_u, y_u, u).ev(Xd, Yd)
-        v_tilde = interp.RectBivariateSpline(x_v, y_v, v).ev(Xd, Yd)
+        Xd_u = X_u - ui0p5_u * dt
+        Yd_u = Y_u - vi0p5_u * dt
+
+        Xd_v = X_v - ui0p5_v * dt
+        Yd_v = Y_v - vi0p5_v * dt
+
+        u_tilde = interp.RectBivariateSpline(x_u, y_u, u).ev(Xd_u, Yd_u)
+        v_tilde = interp.RectBivariateSpline(x_v, y_v, v).ev(Xd_v, Yd_v)
         eta_tilde = interp.RectBivariateSpline(x, y, eta).ev(Xd, Yd)
         
         dudx = (u[1:, :] - u[:-1, :]) / dx
@@ -110,24 +132,24 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
 
         for j in range(2):
             if (i + j) % 2 == 0:
-                v_u[1:-1, :] = (v_tilde[:-1, :] + v_tilde[1:, :]) / 2
-                u_tilde_u = (u_tilde[:-1, :] + u_tilde[1:, :]) / 2
+                v_u[1:-1, :] = (v_tilde[:-1, :-1] + v_tilde[1:, :-1] +
+				v_tilde[-1:, 1:] + v_tilde[1:, 1:]) / 4
                 deta_dx_u = (eta[1:, :] - eta[:-1, :]) / dx
 
-                u[1:-1, :] = (+ u_tilde_u
+		u[1:-1, :] = (+ u_tilde[1:-1, :]
                               + (f0 + B * Y_u[1:-1, :]) * dt * v_u[1:-1, :] 
                               - g * dt * deta_dx_u
-                              - gamma * dt * u_tilde_u
+			      - gamma * dt * u_tilde[1:-1, :]
                               + tau_x_u * dt / (rho * H))
             else:
-                u_v[:, 1:-1] = (u_tilde[:, :-1] + u_tilde[:, 1:]) / 2
-                v_tilde_v = (v_tilde[:, :-1] + v_tilde[:, 1:]) / 2
+                u_v[:, 1:-1] = (u_tilde[:-1, :-1] + u_tilde[1:, :-1] +
+			        u_tilde[:-1, 1:] + u_tilde[1:, 1:]) / 4
                 deta_dy_v = (eta[:, 1:] - eta[:, :-1]) / dy
 
-                v[:, 1:-1] = (+ v_tilde_v
+		v[:, 1:-1] = (+ v_tilde[:, 1:-1]
                               - (f0 + B * Y_v[:, 1:-1]) * dt * u_v[:, 1:-1] 
                               - g * dt * deta_dy_v
-                              - gamma * dt * v_tilde_v
+			      - gamma * dt * v_tilde[:, 1:-1]
                               + tau_y_v * dt / (rho * H))
 
             # Kinematic BCs: no normal flow.
@@ -141,7 +163,7 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
         Es.append(energy(eta, u_grid, v_grid, rho, H, g, dx, dy))
 
         if i % 100 == 1:
-            print('{}'.format(t))
+            print('{}: energy={}'.format(t, Es[-1]))
             if plot:
                 plt.figure(1)
                 plt.clf()
