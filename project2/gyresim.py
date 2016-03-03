@@ -5,6 +5,7 @@ from __future__ import division
 import numpy as np
 import pylab as plt
 import scipy.interpolate as interp
+from scipy.integrate import simps
 #from numba.decorators import jit, autojit                             
 
 def init_settings(**kwargs):
@@ -21,16 +22,16 @@ def init_settings(**kwargs):
     return settings
 
 
-def energy(eta, u, v, rho, H, g, dx, dy):
-    E = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
+def energy(eta, u, v, rho, H, g, x, y):
+    #dx, dy = x[1] - x[0], y[1] - y[0]
+    #Eold = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
+    Ez =  0.5 * (rho * (H * (u**2 + v**2) + g * eta**2))
+    E = simps(simps(Ez, y), x)
     return E
 
 
-def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y, 
-                 f0, B, g, gamma, rho, H, tau0, L, plot):
-    # TODO: Not working. Looks like it's almost there, but Coriolis force not working?
-    # Turns into clockwise gyre (as it should), but remains symmetric in x whereas
-    # should develop into asymmetric with 0 vel moving W (left).
+def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y, 
+                      f0, B, g, gamma, rho, H, tau0, L, plot):
     eta = eta0
     u = u0
     v = v0
@@ -60,18 +61,15 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
     # phi = f0 * dt
     #if phi > 1:
         #print('Warning, runnint with phi={} (>1)'.format(phi))
-    tau_x = - tau0 * np.cos(np.pi * Y / L)
-    tau_y = np.zeros_like(Y)
+    tau_x = - tau0 * np.cos(np.pi * Y_u / L)
+    tau_y = np.zeros_like(Y_v)
 
     v_u = np.zeros_like(u0)
     u_v = np.zeros_like(v0)
 
     u_grid = (u[:-1, :] + u[1:, :]) / 2
     v_grid = (v[:, :-1] + v[:, 1:]) / 2
-    Es = [energy(eta, u_grid, v_grid, rho, H, g, dx, dy)]
-
-    tau_x_u = (tau_x[:-1, :] + tau_x[1:, :]) / 2
-    tau_y_v = (tau_y[:, :-1] + tau_y[:, 1:]) / 2
+    Es = [energy(eta, u_grid, v_grid, rho, H, g, x, y)]
 
     u_prev = u.copy()
     v_prev = v.copy()
@@ -90,7 +88,7 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
         Yi = Y - v_grid * dt/2
 
 	v_u[1:-1, :] = (v[:-1, :-1] + v[1:, :-1] +
-			v[-1:, 1:] + v[1:, 1:]) / 4
+			v[:-1, 1:] + v[1:, 1:]) / 4
 	u_v[:, 1:-1] = (u[:-1, :-1] + u[1:, :-1] +
 			u[:-1, 1:] + u[1:, 1:]) / 4
         Xi_u = X_u - u * dt/2
@@ -133,14 +131,14 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
         for j in range(2):
             if (i + j) % 2 == 0:
                 v_u[1:-1, :] = (v_tilde[:-1, :-1] + v_tilde[1:, :-1] +
-				v_tilde[-1:, 1:] + v_tilde[1:, 1:]) / 4
+				v_tilde[:-1, 1:] + v_tilde[1:, 1:]) / 4
                 deta_dx_u = (eta[1:, :] - eta[:-1, :]) / dx
 
 		u[1:-1, :] = (+ u_tilde[1:-1, :]
                               + (f0 + B * Y_u[1:-1, :]) * dt * v_u[1:-1, :] 
                               - g * dt * deta_dx_u
 			      - gamma * dt * u_tilde[1:-1, :]
-                              + tau_x_u * dt / (rho * H))
+                              + tau_x[1:-1, :] * dt / (rho * H))
             else:
                 u_v[:, 1:-1] = (u_tilde[:-1, :-1] + u_tilde[1:, :-1] +
 			        u_tilde[:-1, 1:] + u_tilde[1:, 1:]) / 4
@@ -150,7 +148,7 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
                               - (f0 + B * Y_v[:, 1:-1]) * dt * u_v[:, 1:-1] 
                               - g * dt * deta_dy_v
 			      - gamma * dt * v_tilde[:, 1:-1]
-                              + tau_y_v * dt / (rho * H))
+                              + tau_y[:, 1:-1] * dt / (rho * H))
 
             # Kinematic BCs: no normal flow.
             u[0, :] = 0
@@ -160,21 +158,24 @@ def gyre_sim_sl2(t0, eta0, u0, v0, timelength, nt, X, Y,
 
         u_grid = (u[:-1, :] + u[1:, :]) / 2
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Es.append(energy(eta, u_grid, v_grid, rho, H, g, dx, dy))
+        Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
-        if i % 100 == 1:
+        if i % 1000 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
             if plot:
-                plt.figure(1)
-                plt.clf()
-                cs = plt.contour(X, Y, u_grid)
-                plt.figure(2)
-                plt.clf()
-                cs = plt.contour(X, Y, v_grid)
-                plt.figure(3)
-                plt.clf()
-                plt.quiver(X[::5, ::5], Y[::5, ::5], u_grid[::5, ::5], v_grid[::5, ::5])
-                plt.pause(0.01)
+                try:
+                    plt.figure(1)
+                    plt.clf()
+                    cs = plt.contour(X, Y, u_grid)
+                    plt.figure(2)
+                    plt.clf()
+                    cs = plt.contour(X, Y, v_grid)
+                    plt.figure(3)
+                    plt.clf()
+                    plt.quiver(X[::2, ::2], Y[::2, ::2], u_grid[::2, ::2], v_grid[::2, ::2])
+                    plt.pause(0.01)
+                except:
+                    pass
 
     return times, eta, u, v, Es
 
@@ -185,6 +186,7 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, ta
     v = v0
     times = np.linspace(t0, t0 + timelength, nt + 1)
     dt = times[1] - times[0]
+    x, y = X[:, 0], Y[0, :]
     dx = X[1, 0] - X[0, 0]
     dy = Y[0, 1] - Y[0, 0]
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
@@ -206,7 +208,7 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, ta
 
     u_grid = (u[:-1, :] + u[1:, :]) / 2
     v_grid = (v[:, :-1] + v[:, 1:]) / 2
-    Es = [energy(eta, u_grid, v_grid, rho, H, g, dx, dy)]
+    Es = [energy(eta, u_grid, v_grid, rho, H, g, x, y)]
 
     for i, t in enumerate(times[1:]):
         eta = eta - H * dt * ((u[1:, :] - u[:-1, :]) / dx + 
@@ -237,7 +239,7 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, ta
 
         u_grid = (u[:-1, :] + u[1:, :]) / 2
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Es.append(energy(eta, u_grid, v_grid, rho, H, g, dx, dy))
+        Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
         if i % 100 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
@@ -371,7 +373,7 @@ def TaskABC():
         up = u_grid - u_st
         vp = v_grid - v_st
         etap = eta - eta_st
-        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], dx, dy)
+        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], x, y)
         result = {}
         result['sim'] = (times, eta, u, v, Es)
         result['ana'] = (eta_st, u_st, v_st)
@@ -381,7 +383,8 @@ def TaskABC():
 
         results.append(result)
 
-    analyse_results(results)
+    #analyse_results(results)
+    return results
 
 
 def TaskD():
@@ -390,7 +393,9 @@ def TaskD():
     L = settings['L']
 
     results = []
-    for timelength, nx, nt in [(100000, 51, 10000)]:
+    for timelength, nx, nt in [(10000, 21, 100), 
+                               (86400 * 50, 51, 8640 * 1.42 * 5)]:
+                               #(10000000, 21, 100000)]:
         ny = nx
         x = np.linspace(0, L, nx)
         y = np.linspace(0, L, ny)
@@ -403,9 +408,27 @@ def TaskD():
         u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
         v0 = np.zeros((X.shape[0], X.shape[1] + 1))
 
-        times, h, u, v, Es = gyre_sim_sl2(0, eta0, u0, v0, timelength, nt, X, Y, **settings)
+        times, eta, u, v, Es = gyre_sim_semi_lag(0, eta0, u0, v0, timelength, nt, X, Y, **settings)
+        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, **settings)
+
+        u_grid = (u[:-1, :] + u[1:, :]) / 2
+        v_grid = (v[:, :-1] + v[:, 1:]) / 2
+
+        up = u_grid - u_st
+        vp = v_grid - v_st
+        etap = eta - eta_st
+        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], x, y)
+        result = {}
+        result['sim'] = (times, eta, u, v, Es)
+        result['ana'] = (eta_st, u_st, v_st)
+        result['res'] = 'energy_{}x{}'.format(nx, ny)
+        result['grid'] = (X, Y)
+        result['energy_diff'] = E
+
+        results.append(result)
+    return results
 
 if __name__ == '__main__':
     plt.ion()
-    #TaskABC()
-    TaskD()
+    #resultsABC = TaskABC()
+    resultsD = TaskD()
