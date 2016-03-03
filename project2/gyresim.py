@@ -6,7 +6,13 @@ import numpy as np
 import pylab as plt
 import scipy.interpolate as interp
 from scipy.integrate import simps
-#from numba.decorators import jit, autojit                             
+
+jitenabled = False
+try:
+    from numba.decorators import jit, autojit                             
+except ImportError:
+    autojit = None
+    print('numba not availaible')
 
 def init_settings(**kwargs):
     settings = {}
@@ -30,8 +36,24 @@ def energy(eta, u, v, rho, H, g, x, y):
     return E
 
 
+def plot_timestep(X, Y, u_grid, v_grid):
+    try:
+        plt.figure(1)
+        plt.clf()
+        cs = plt.contour(X, Y, u_grid)
+        plt.figure(2)
+        plt.clf()
+        cs = plt.contour(X, Y, v_grid)
+        plt.figure(3)
+        plt.clf()
+        plt.quiver(X[::2, ::2], Y[::2, ::2], u_grid[::2, ::2], v_grid[::2, ::2])
+        plt.pause(0.01)
+    except:
+        pass
+
 def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y, 
-                      f0, B, g, gamma, rho, H, tau0, L, plot):
+                      f0, B, g, gamma, rho, H, tau0, L, 
+                      plot, plot_timestep):
     eta = eta0
     u = u0
     v = v0
@@ -163,19 +185,7 @@ def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y,
         if i % 1000 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
             if plot:
-                try:
-                    plt.figure(1)
-                    plt.clf()
-                    cs = plt.contour(X, Y, u_grid)
-                    plt.figure(2)
-                    plt.clf()
-                    cs = plt.contour(X, Y, v_grid)
-                    plt.figure(3)
-                    plt.clf()
-                    plt.quiver(X[::2, ::2], Y[::2, ::2], u_grid[::2, ::2], v_grid[::2, ::2])
-                    plt.pause(0.01)
-                except:
-                    pass
+                plot_timestep(X, Y, u_grid, v_grid)
 
     return times, eta, u, v, Es
 
@@ -389,12 +399,12 @@ def TaskABC():
 
 def TaskD():
     settings = init_settings()
-    settings['plot'] = True
+    settings['plot'] = False
     L = settings['L']
 
     results = []
-    for timelength, nx, nt in [(10000, 21, 100), 
-                               (86400 * 50, 51, 8640 * 1.42 * 5)]:
+    for timelength, nx, nt in [(10000, 51, 200)]:
+                               #(86400 * 50, 51, 8640 * 1.42 * 5)]:
                                #(10000000, 21, 100000)]:
         ny = nx
         x = np.linspace(0, L, nx)
@@ -408,8 +418,21 @@ def TaskD():
         u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
         v0 = np.zeros((X.shape[0], X.shape[1] + 1))
 
-        times, eta, u, v, Es = gyre_sim_semi_lag(0, eta0, u0, v0, timelength, nt, X, Y, **settings)
-        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, **settings)
+        if jitenabled:
+            # Testing shows jitting is substantially slower!
+            gyre_sim_semi_lag_jit = autojit(gyre_sim_semi_lag)
+            times, eta, u, v, Es =\
+                    gyre_sim_semi_lag_jit(0, eta0, u0, v0, timelength, 
+                                          nt, X, Y, 
+                                          plot_timestep=plot_timestep, 
+                                          **settings)
+        else:
+            times, eta, u, v, Es =\
+                    gyre_sim_semi_lag(0, eta0, u0, v0, timelength, 
+                                      nt, X, Y, plot_timestep=plot_timestep, 
+                                      **settings)
+        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, 
+                                             **settings)
 
         u_grid = (u[:-1, :] + u[1:, :]) / 2
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
@@ -431,4 +454,4 @@ def TaskD():
 if __name__ == '__main__':
     plt.ion()
     #resultsABC = TaskABC()
-    resultsD = TaskD()
+    #resultsD = TaskD()
