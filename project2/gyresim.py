@@ -75,10 +75,10 @@ def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y,
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
     c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
     # TODO: how does squaring change dimd c?
-    c2 = c_x**2 + c_y**2
-    print('c2={}'.format(c2))
-    if c2 > 0.25:
-        print('Warning, running with c2={} (>0.25)'.format(c2))
+    c = np.sqrt(c_x**2 + c_y**2)
+    print('c={}'.format(c))
+    if c > 0.5:
+        print('Warning, running with c={} (>0.5)'.format(c))
     # TODO: How to calc dimd phi?
     # phi = f0 * dt
     #if phi > 1:
@@ -182,7 +182,7 @@ def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y,
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
         Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
-        if i % 1000 == 0:
+        if i % 100 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
             if plot:
                 plot_timestep(X, Y, u_grid, v_grid)
@@ -202,10 +202,10 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, ta
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
     c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
     # TODO: how does squaring change dimd c?
-    c2 = c_x**2 + c_y**2
-    print('c2={}'.format(c2))
-    if c2 > 0.25:
-        print('Warning, running with c2={} (>0.25)'.format(c2))
+    c = np.sqrt(c_x**2 + c_y**2)
+    print('c={}'.format(c))
+    if c > 0.5:
+        print('Warning, running with c={} (>0.5)'.format(c))
     # TODO: How to calc dimd phi?
     # phi = f0 * dt
     #if phi > 1:
@@ -310,6 +310,10 @@ def calc_analytical(eta0, X, Y, **settings):
         plt.clabel(cs, inline=1, fontsize=10)
         plt.clf()
         plt.quiver(X[::5, ::5], Y[::5, ::5], u_st[::5, ::5], v_st[::5, ::5])
+        plt.figure(24)
+        plt.clf()
+        plt.contourf(X, Y, eta_st, 100)
+        plt.colorbar()
 
     return eta_st, u_st, v_st
 
@@ -357,9 +361,9 @@ def TaskABC():
     settings['plot'] = True
 
     results = []
-    for timelength, nx, nt in [(86400 * 50, 51, 8640 * 1.42 * 5),
-                               (86400 * 50, 101, 8640 * 2 * 5 * 1.42),
-                               (86400, 51, 864 * 1.42)]:
+    for timelength, nx, nt in [#(86400 * 50, 51, 8640 * 1.42 * 5),
+                               #(86400 * 50, 101, 8640 * 2 * 5 * 1.42),
+                               (86400, 51, 620)]:
         ny = nx
         x = np.linspace(0, L, nx)
         y = np.linspace(0, L, ny)
@@ -399,11 +403,11 @@ def TaskABC():
 
 def TaskD():
     settings = init_settings()
-    settings['plot'] = False
+    settings['plot'] = True
     L = settings['L']
 
     results = []
-    for timelength, nx, nt in [(10000, 51, 200)]:
+    for timelength, nx, nt in [(86400, 51, 620)]:
                                #(86400 * 50, 51, 8640 * 1.42 * 5)]:
                                #(10000000, 21, 100000)]:
         ny = nx
@@ -451,7 +455,28 @@ def TaskD():
         results.append(result)
     return results
 
+def plot_analytical():
+    settings = init_settings()
+    L = settings['L']
+    settings['plot'] = True
+    nx = 20
+    ny = nx
+    x = np.linspace(0, L, nx)
+    y = np.linspace(0, L, ny)
+    dx = x[1] - x[0]
+    dy = y[1] - y[0]
+
+    X, Y = np.meshgrid(x, y, indexing='ij')
+
+    eta0 = np.zeros_like(X)
+    u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
+    v0 = np.zeros((X.shape[0], X.shape[1] + 1))
+
+    eta_st, u_st, v_st = calc_analytical(0, X, Y, 
+                                         **settings)
+
 if __name__ == '__main__':
     plt.ion()
-    #resultsABC = TaskABC()
+    resultsABC = TaskABC()
     #resultsD = TaskD()
+    #plot_analytical()
