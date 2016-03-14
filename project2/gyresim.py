@@ -2,10 +2,13 @@
 will allow me to work out CFL conditions. This will be the phase speed of the
 gravity waves.'''
 from __future__ import division
+import os
+import cPickle
+
 import numpy as np
-import pylab as plt
 import scipy.interpolate as interp
 from scipy.integrate import simps
+
 
 jitenabled = False
 try:
@@ -13,6 +16,28 @@ try:
 except ImportError:
     autojit = None
     print('numba not availaible')
+
+
+class ResultsManager(object):
+    def __init__(self):
+        self._path = 'results'
+        if not os.path.exists(self._path):
+            os.makedirs(self._path)
+
+    def exists(self, key):
+        return os.path.exists(os.path.join(self._path, '{}.pkl'.format(key)))
+
+    def get(self, key):
+        print('Getting: {}'.format(key))
+        return cPickle.load(open(os.path.join(self._path, '{}.pkl'.format(key)), 'r'))
+
+    def save(self, key, result):
+        print('Saving: {}'.format(key))
+        if not self.exists(key):
+            return cPickle.dump(result, open(os.path.join(self._path, '{}.pkl'.format(key)), 'w'))
+        else:
+            print('Result {} already exists, delete first'.format(key))
+
 
 def init_settings(**kwargs):
     settings = {}
@@ -32,31 +57,29 @@ def energy(eta, u, v, rho, H, g, x, y):
     #dx, dy = x[1] - x[0], y[1] - y[0]
     #Eold = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
     Ez =  0.5 * (rho * (H * (u**2 + v**2) + g * eta**2))
-    E = simps(simps(Ez, y), x)
+    E = simps(simps(Ez, y), x) # 2d integration using Simpson's rule.
     return E
 
 
-def plot_timestep(X, Y, u_grid, v_grid):
-    try:
-        plt.figure(1)
-        plt.clf()
-        cs = plt.contour(X, Y, u_grid)
-        plt.figure(2)
-        plt.clf()
-        cs = plt.contour(X, Y, v_grid)
-        plt.figure(3)
-        plt.clf()
-        plt.quiver(X[::2, ::2], Y[::2, ::2], u_grid[::2, ::2], v_grid[::2, ::2])
-        plt.pause(0.01)
-    except:
-        pass
-
-def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y, 
+def gyre_sim_semi_lag(t0, timelength, dt, dx, dy, 
                       f0, B, g, gamma, rho, H, tau0, L, 
                       plot, plot_timestep):
+    nx = L / dx + 1
+    ny = nx
+
+    x = np.linspace(0, L, nx)
+    y = np.linspace(0, L, ny)
+
+    X, Y = np.meshgrid(x, y, indexing='ij')
+
+    eta0 = np.zeros_like(X)
+    u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
+    v0 = np.zeros((X.shape[0], X.shape[1] + 1))
+
     eta = eta0
     u = u0
     v = v0
+    nt = timelength / dt
     times = np.linspace(t0, t0 + timelength, nt + 1)
     dt = times[1] - times[0]
     dx = X[1, 0] - X[0, 0]
@@ -74,15 +97,10 @@ def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y,
 
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
     c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
-    # TODO: how does squaring change dimd c?
     c = np.sqrt(c_x**2 + c_y**2)
     print('c={}'.format(c))
-    if c > 0.5:
-        print('Warning, running with c={} (>0.5)'.format(c))
-    # TODO: How to calc dimd phi?
-    # phi = f0 * dt
-    #if phi > 1:
-        #print('Warning, runnint with phi={} (>1)'.format(phi))
+    if c > 1.0:
+        print('Warning, running with c={} (>1.0)'.format(c))
     tau_x = - tau0 * np.cos(np.pi * Y_u / L)
     tau_y = np.zeros_like(Y_v)
 
@@ -187,29 +205,38 @@ def gyre_sim_semi_lag(t0, eta0, u0, v0, timelength, nt, X, Y,
             if plot:
                 plot_timestep(X, Y, u_grid, v_grid)
 
-    return times, eta, u, v, Es
+    return X, Y, times, eta, u, v, Es
 
 
-def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, tau0, L, plot):
+def gyre_sim(t0, timelength, dt, dx, dy, 
+             f0, B, g, gamma, rho, H, tau0, L, 
+             plot, plot_timestep):
+    nx = L / dx + 1
+    ny = nx
+
+    x = np.linspace(0, L, nx)
+    y = np.linspace(0, L, ny)
+
+    X, Y = np.meshgrid(x, y, indexing='ij')
+
+    eta0 = np.zeros_like(X)
+    u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
+    v0 = np.zeros((X.shape[0], X.shape[1] + 1))
+
     eta = eta0
     u = u0
     v = v0
+    nt = timelength / dt
     times = np.linspace(t0, t0 + timelength, nt + 1)
-    dt = times[1] - times[0]
     x, y = X[:, 0], Y[0, :]
     dx = X[1, 0] - X[0, 0]
     dy = Y[0, 1] - Y[0, 0]
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
     c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
-    # TODO: how does squaring change dimd c?
     c = np.sqrt(c_x**2 + c_y**2)
     print('c={}'.format(c))
-    if c > 0.5:
-        print('Warning, running with c={} (>0.5)'.format(c))
-    # TODO: How to calc dimd phi?
-    # phi = f0 * dt
-    #if phi > 1:
-        #print('Warning, runnint with phi={} (>1)'.format(phi))
+    if c > 1.0:
+        print('Warning, running with c={} (>1.0)'.format(c))
     tau_x = - tau0 * np.cos(np.pi * Y / L)
     tau_y = np.zeros_like(Y)
 
@@ -254,18 +281,9 @@ def gyre_sim(t0, eta0, u0, v0, timelength, nt, X, Y, f0, B, g, gamma, rho, H, ta
         if i % 100 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
             if plot:
-                plt.figure(1)
-                plt.clf()
-                cs = plt.contour(X, Y, u_grid)
-                plt.figure(2)
-                plt.clf()
-                cs = plt.contour(X, Y, v_grid)
-                plt.figure(3)
-                plt.clf()
-                plt.quiver(X[::5, ::5], Y[::5, ::5], u_grid[::5, ::5], v_grid[::5, ::5])
-                plt.pause(0.01)
+                plot_timestep(X, Y, u_grid, v_grid)
 
-    return times, eta, u, v, Es
+    return X, Y, times, eta, u, v, Es
 
 
 def analytical_steady_state(eta0, X, Y, L, f0, B, g, gamma, rho, H, tau0, plot):
@@ -293,190 +311,3 @@ def analytical_steady_state(eta0, X, Y, L, f0, B, g, gamma, rho, H, tau0, plot):
                  + B * L / (f0 * np.pi) * np.cos(np.pi * Y / L))))
 
     return eta_st, u_st, v_st 
-
-def calc_analytical(eta0, X, Y, **settings):
-    eta_st, u_st, v_st = analytical_steady_state(eta0=eta0, X=X, Y=Y, **settings)
-    if settings['plot']:
-        plt.figure(21)
-        plt.clf()
-        plt.title('u')
-        cs = plt.contour(X, Y, u_st)
-        plt.clabel(cs, inline=1, fontsize=10)
-        plt.figure(22)
-        plt.clf()
-        plt.title('v')
-        cs = plt.contour(X, Y, v_st)
-        plt.figure(23)
-        plt.clabel(cs, inline=1, fontsize=10)
-        plt.clf()
-        plt.quiver(X[::5, ::5], Y[::5, ::5], u_st[::5, ::5], v_st[::5, ::5])
-        plt.figure(24)
-        plt.clf()
-        plt.contourf(X, Y, eta_st, 100)
-        plt.colorbar()
-
-    return eta_st, u_st, v_st
-
-def analyse_results(results):
-    # After 1 day:
-    X, Y = results[2]['grid'][0], results[2]['grid'][1]
-    eta = results[2]['sim'][1]
-    u, v = results[2]['sim'][2], results[2]['sim'][3]
-
-    plt.figure(91)
-    plt.clf()
-    plt.title('u vs x southern edge')
-    plt.plot(X[:, 0], (u[:-1, 0] + u[1:, 0]) / 2)
-
-    plt.figure(92)
-    plt.clf()
-    plt.title('v vs y western edge')
-    plt.plot(Y[0, :], (v[0, :-1] + v[0, 1:])/ 2)
-
-    plt.figure(93)
-    plt.clf()
-    plt.title('$\eta$ vs x middle')
-    plt.plot(X[:, 0], eta[:, eta.shape[1]/2])
-
-    plt.figure(94)
-    plt.clf()
-    plt.title('Contour plot of $\eta$')
-    cs = plt.contour(X, Y, eta)
-    plt.clabel(cs, inline=1, fontsize=10)
-
-    plt.figure(95)
-    plt.clf()
-    plt.title('Energy vs time')
-    plt.plot(results[0]['sim'][0], results[0]['sim'][4], 
-             label=results[0]['res'])
-    plt.plot(results[1]['sim'][0], results[1]['sim'][4], 
-             label=results[1]['res'])
-    print('{}: energy_diff={}'.format(results[0]['res'], results[0]['energy_diff']))
-    print('{}: energy_diff={}'.format(results[1]['res'], results[1]['energy_diff']))
-
-
-def TaskABC():
-    settings = init_settings()
-    L = settings['L']
-    settings['plot'] = True
-
-    results = []
-    for timelength, nx, nt in [#(86400 * 50, 51, 8640 * 1.42 * 5),
-                               #(86400 * 50, 101, 8640 * 2 * 5 * 1.42),
-                               (86400, 51, 620)]:
-        ny = nx
-        x = np.linspace(0, L, nx)
-        y = np.linspace(0, L, ny)
-        dx = x[1] - x[0]
-        dy = y[1] - y[0]
-
-        X, Y = np.meshgrid(x, y, indexing='ij')
-
-        eta0 = np.zeros_like(X)
-        u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
-        v0 = np.zeros((X.shape[0], X.shape[1] + 1))
-
-        #gyre_sim_jit = autojit(gyre_sim)
-        times, eta, u, v, Es = gyre_sim(0, eta0, u0, v0, timelength, nt, X, Y, **settings)
-
-        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, **settings)
-
-        u_grid = (u[:-1, :] + u[1:, :]) / 2
-        v_grid = (v[:, :-1] + v[:, 1:]) / 2
-
-        up = u_grid - u_st
-        vp = v_grid - v_st
-        etap = eta - eta_st
-        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], x, y)
-        result = {}
-        result['sim'] = (times, eta, u, v, Es)
-        result['ana'] = (eta_st, u_st, v_st)
-        result['res'] = 'energy_{}x{}'.format(nx, ny)
-        result['grid'] = (X, Y)
-        result['energy_diff'] = E
-
-        results.append(result)
-
-    #analyse_results(results)
-    return results
-
-
-def TaskD():
-    settings = init_settings()
-    settings['plot'] = True
-    L = settings['L']
-
-    results = []
-    for timelength, nx, nt in [(86400, 51, 620)]:
-                               #(86400 * 50, 51, 8640 * 1.42 * 5)]:
-                               #(10000000, 21, 100000)]:
-        ny = nx
-        x = np.linspace(0, L, nx)
-        y = np.linspace(0, L, ny)
-        dx = x[1] - x[0]
-        dy = y[1] - y[0]
-
-        X, Y = np.meshgrid(x, y, indexing='ij')
-
-        eta0 = np.zeros_like(X)
-        u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
-        v0 = np.zeros((X.shape[0], X.shape[1] + 1))
-
-        if jitenabled:
-            # Testing shows jitting is substantially slower!
-            gyre_sim_semi_lag_jit = autojit(gyre_sim_semi_lag)
-            times, eta, u, v, Es =\
-                    gyre_sim_semi_lag_jit(0, eta0, u0, v0, timelength, 
-                                          nt, X, Y, 
-                                          plot_timestep=plot_timestep, 
-                                          **settings)
-        else:
-            times, eta, u, v, Es =\
-                    gyre_sim_semi_lag(0, eta0, u0, v0, timelength, 
-                                      nt, X, Y, plot_timestep=plot_timestep, 
-                                      **settings)
-        eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, 
-                                             **settings)
-
-        u_grid = (u[:-1, :] + u[1:, :]) / 2
-        v_grid = (v[:, :-1] + v[:, 1:]) / 2
-
-        up = u_grid - u_st
-        vp = v_grid - v_st
-        etap = eta - eta_st
-        E = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], x, y)
-        result = {}
-        result['sim'] = (times, eta, u, v, Es)
-        result['ana'] = (eta_st, u_st, v_st)
-        result['res'] = 'energy_{}x{}'.format(nx, ny)
-        result['grid'] = (X, Y)
-        result['energy_diff'] = E
-
-        results.append(result)
-    return results
-
-def plot_analytical():
-    settings = init_settings()
-    L = settings['L']
-    settings['plot'] = True
-    nx = 20
-    ny = nx
-    x = np.linspace(0, L, nx)
-    y = np.linspace(0, L, ny)
-    dx = x[1] - x[0]
-    dy = y[1] - y[0]
-
-    X, Y = np.meshgrid(x, y, indexing='ij')
-
-    eta0 = np.zeros_like(X)
-    u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
-    v0 = np.zeros((X.shape[0], X.shape[1] + 1))
-
-    eta_st, u_st, v_st = calc_analytical(0, X, Y, 
-                                         **settings)
-
-if __name__ == '__main__':
-    plt.ion()
-    resultsABC = TaskABC()
-    #resultsD = TaskD()
-    #plot_analytical()
