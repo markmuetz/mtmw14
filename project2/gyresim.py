@@ -2,8 +2,6 @@
 will allow me to work out CFL conditions. This will be the phase speed of the
 gravity waves.'''
 from __future__ import division
-import os
-import cPickle
 
 import numpy as np
 import scipy.interpolate as interp
@@ -16,27 +14,6 @@ try:
 except ImportError:
     autojit = None
     print('numba not availaible')
-
-
-class ResultsManager(object):
-    def __init__(self):
-        self._path = 'results'
-        if not os.path.exists(self._path):
-            os.makedirs(self._path)
-
-    def exists(self, key):
-        return os.path.exists(os.path.join(self._path, '{}.pkl'.format(key)))
-
-    def get(self, key):
-        print('Getting: {}'.format(key))
-        return cPickle.load(open(os.path.join(self._path, '{}.pkl'.format(key)), 'r'))
-
-    def save(self, key, result):
-        print('Saving: {}'.format(key))
-        if not self.exists(key):
-            return cPickle.dump(result, open(os.path.join(self._path, '{}.pkl'.format(key)), 'w'))
-        else:
-            print('Result {} already exists, delete first'.format(key))
 
 
 def init_settings(**kwargs):

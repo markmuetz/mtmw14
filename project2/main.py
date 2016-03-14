@@ -3,8 +3,9 @@ from collections import OrderedDict
 
 import pylab as plt
 
-from gyresim import init_settings, gyre_sim, gyre_sim_semi_lag, ResultsManager
+from gyresim import init_settings, gyre_sim, gyre_sim_semi_lag
 from gyreplot import analyse_one_day_result, analyse_diff_res
+from gyreresults import ResultsManager
 
 
 def tasks(run_controls):
