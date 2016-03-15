@@ -9,38 +9,67 @@ def analyse_one_day_result(result):
     eta = result['sim'][1]
     u, v = result['sim'][2], result['sim'][3]
 
-    plt.figure(91)
-    plt.clf()
-    plt.title('u vs x southern edge')
-    plt.plot(X[:, 0], (u[:-1, 0] + u[1:, 0]) / 2)
+    f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    f.subplots_adjust(hspace=0.45, wspace=0.2)
 
-    plt.figure(92)
-    plt.clf()
-    plt.title('v vs y western edge')
-    plt.plot(Y[0, :], (v[0, :-1] + v[0, 1:])/ 2)
+    ax1.set_title('(a) u vs x southern edge')
+    ax1.plot(X[:, 0] / 1e3, (u[:-1, 0] + u[1:, 0]) / 2)
+    ax1.set_xlabel('x (km)')
+    ax1.set_ylabel('u (ms$^{-1}$)')
 
-    plt.figure(93)
-    plt.clf()
-    plt.title('$\eta$ vs x middle')
-    plt.plot(X[:, 0], eta[:, eta.shape[1]/2])
+    ax2.set_title('(b) v vs y western edge')
+    ax2.plot(Y[0, :] / 1e3, (v[0, :-1] + v[0, 1:])/ 2)
+    ax2.set_xlabel('y (km)')
+    ax2.set_ylabel('v (ms$^{-1}$)')
+    ax2.yaxis.tick_right()
+    ax2.yaxis.set_label_position("right")
 
-    plt.figure(94)
-    plt.clf()
-    plt.title('Contour plot of $\eta$')
-    cs = plt.contour(X, Y, eta)
-    plt.clabel(cs, inline=1, fontsize=10)
+    ax3.set_title('(c) $\eta$ vs x middle')
+    ax3.plot(X[:, 0] / 1e3, eta[:, eta.shape[1]/2])
+    ax3.set_xlabel('x (km)')
+    ax3.set_ylabel('$\eta$ (m)')
+
+    ax4.set_title('(d) Contour plot of $\eta$')
+    cs = plt.contour(X / 1e3, Y / 1e3, eta)
+    ax4.clabel(cs, inline=1, fontsize=10)
+    ax4.set_xlabel('x (km)')
+    ax4.set_ylabel('y (km)')
+    ax4.yaxis.tick_right()
+    ax4.yaxis.set_label_position("right")
+
+    plt.savefig('figures/task_a.png')
 
 def analyse_diff_res(res1, res2):
     plt.figure(95)
     plt.clf()
-    plt.title('Energy vs time')
-    plt.plot(res1['sim'][0], res1['sim'][4], 
+    #plt.title('Energy vs time')
+    f, (ax1, ax2) = plt.subplots(2, 1)
+    ax1.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4]) / 1e15, 
              label=res1['res'])
-    plt.plot(res2['sim'][0], res2['sim'][4], 
+    ax1.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4]) / 1e15, 
              label=res2['res'])
-    #plt.legend()
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('energy (PJ)')
+    ax1.legend(loc='lower right')
+
+    ax2.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4]) / 1e15, 
+             label=res1['res'])
+    ax2.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4]) / 1e15, 
+             label=res2['res'])
+    ax2.set_xlim((30, 100))
+    ax2.set_ylim((2.65, 2.85))
+    ax2.set_xlabel('time (days)')
+    ax2.set_ylabel('energy (PJ)')
     print('{}: energy_diff={}'.format(res1['res'], res1['energy_diff']))
     print('{}: energy_diff={}'.format(res2['res'], res2['energy_diff']))
+
+    pd1 = (np.array(res1['sim'][4]).max() - res1['sim'][4][-1] ) / np.array(res1['sim'][4]).max() * 100
+    pd2 = (np.array(res2['sim'][4]).max() - res2['sim'][4][-1] ) / np.array(res2['sim'][4]).max() * 100
+    print('% diff 1 {}'.format(pd1))
+    print('% diff 2 {}'.format(pd2))
+
+
+    plt.savefig('figures/task_b_energy.png')
 
 
 def calc_analytical():

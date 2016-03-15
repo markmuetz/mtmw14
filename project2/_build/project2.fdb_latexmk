@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1458050772 "project2.tex" "_build/project2.pdf" "project2" 1458050775
+["pdflatex"] 1458076489 "project2.tex" "_build/project2.pdf" "project2" 1458076489
   "/etc/texmf/web2c/texmf.cnf" 1438191850 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -9,6 +9,7 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm" 1136768653 768 1321e9409b4137d6fb428ac9dc956269 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt8.tfm" 1136768653 768 d7b9a2629a0c353102ad947dc9221d49 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1248133631 36281 c355509802a035cadc5f15869451dcee ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
@@ -93,10 +94,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1392645748 31083 1dfd8bf685ce0009c40532fedf8a7c53 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1438191881 105562 46e478c1ef38c10b1485525bb94bb58e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1438191873 991554 a0c3f485ee5470d14382ad641f9f36d2 ""
-  "_build/project2.aux" 1458050772 923 6bf7dced6bfbd33be2fb7f6cdd7ae6e3 ""
+  "_build/project2.aux" 1458076489 1695 8c88aba28a4e041390c35df41f76fc14 ""
   "figures/arakawa_c_grid.png" 1458041352 26364 304ac8308dc51fe1c095028eae11294e ""
-  "project2.tex" 1458050771 5526 6f099da5b459ecaa35b535e6e00c5546 ""
+  "figures/task_a.png" 1458070930 108901 0fd7a283efdd5e189ef046d591cc54e0 ""
+  "figures/task_b_energy.png" 1458075482 51352 6c2a6735ec644623b4a1f4e39de866bb ""
+  "project2.tex" 1458076484 9518 5542f9f6c1a4468c804106253769b880 ""
   (generated)
-  "_build/project2.pdf"
-  "_build/project2.aux"
   "_build/project2.log"
+  "_build/project2.aux"
+  "_build/project2.pdf"

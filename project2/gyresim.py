@@ -269,7 +269,7 @@ def gyre_sim(t0, timelength, dt, dx, dy,
         v_grid = (v[:, :-1] + v[:, 1:]) / 2
         Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
-        if i % 100 == 0:
+        if i % 1000 == 0:
             print('{}: energy={}'.format(t, Es[-1]))
             if plot:
                 plot_timestep(X, Y, u_grid, v_grid)

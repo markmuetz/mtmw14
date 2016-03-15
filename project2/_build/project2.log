@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  15 MAR 2016 14:06
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  15 MAR 2016 21:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -721,24 +721,24 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 (_build/project2.aux)
 \openout1 = `project2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 34.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 34.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 36.
  (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    ... okay on input line 36.
 
 (/usr/share/texmf/tex/latex/beamer/base/translator/dicts/translator-basic-dicti
 onary/translator-basic-dictionary-English.dict
@@ -829,37 +829,51 @@ e
 
 \c__siunitx_mathsf_int=\count169
 \c__siunitx_mathtt_int=\count170
-[1
-
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<figures/arakawa_c_grid.png, id=13, 578.16pt x 433.62pt>
+<figures/arakawa_c_grid.png, id=1, 578.16pt x 433.62pt>
 File: figures/arakawa_c_grid.png Graphic file (type png)
 
 <use figures/arakawa_c_grid.png>
-Package pdftex.def Info: figures/arakawa_c_grid.png used on input line 117.
+Package pdftex.def Info: figures/arakawa_c_grid.png used on input line 87.
+(pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
+ [1
+
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] <figures/task_a.png, id=15
+, 578.16pt x 433.62pt>
+File: figures/task_a.png Graphic file (type png)
+
+<use figures/task_a.png>
+Package pdftex.def Info: figures/task_a.png used on input line 149.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
  [2 <./figures/arakawa_c_grid.png>]
-(_build/project2.aux) ) 
+<figures/task_b_energy.png, id=20, 578.16pt x 433.62pt>
+File: figures/task_b_energy.png Graphic file (type png)
+
+<use figures/task_b_energy.png>
+Package pdftex.def Info: figures/task_b_energy.png used on input line 195.
+(pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
+ [3 <./figures/task_a.png>] [4 <./figures/task_b_energy.png>] (_build/project2.
+aux) ) 
 Here is how much of TeX's memory you used:
- 12728 strings out of 494765
- 259618 string characters out of 6175712
- 290771 words of memory out of 5000000
- 15905 multiletter control sequences out of 15000+600000
- 6713 words of font info for 26 fonts, out of 8000000 for 9000
+ 12740 strings out of 494765
+ 259871 string characters out of 6175712
+ 291799 words of memory out of 5000000
+ 15915 multiletter control sequences out of 15000+600000
+ 6108 words of font info for 24 fonts, out of 8000000 for 9000
  80 hyphenation exceptions out of 8191
  39i,16n,43p,10421b,621s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on _build/project2.pdf (2 pages, 105812 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmsy7.pfb>
+Output written on _build/project2.pdf (4 pages, 244901 bytes).
 PDF statistics:
- 42 PDF objects out of 1000 (max. 8388607)
- 28 compressed objects within 1 object stream
+ 56 PDF objects out of 1000 (max. 8388607)
+ 35 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

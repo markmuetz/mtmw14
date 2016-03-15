@@ -52,14 +52,17 @@ def tasks(run_controls):
 if __name__ == '__main__':
     plt.ion()
     run_controls = [('A', 'gyre_sim', 86400, 2e4, 139), 
-                    ('C', 'gyre_sim', 86400 * 50, 2e4, 139),
-                    ('C', 'gyre_sim', 86400 * 50, 1e4, 69),
+                    ('C', 'gyre_sim', 86400 * 100, 2e4, 139),
+                    #('C', 'gyre_sim', 86400 * 100, 1e4, 69), # Unstable!
+		    # N.B. This is stable, it meets the more
+		    # stringent stability requirements in Beckers and Deleersnijder.
+                    ('C', 'gyre_sim', 86400 * 100, 1e4, 30), 
                     ('D', 'gyre_sim_semi_lag', 86400, 2e4, 139),
                     ('D', 'gyre_sim_semi_lag', 86400 * 50, 2e4, 139)]
     results = tasks(run_controls)
-    print('Analyse one day: {}'.format(results.keys()[0]))
-    analyse_one_day_result(results.values()[0])
+    #print('Analyse one day: {}'.format(results.keys()[0]))
+    #analyse_one_day_result(results.values()[0])
     print('Analyse 2 res: {}, {}'.format(results.keys()[1], results.keys()[2]))
     analyse_diff_res(results.values()[1], results.values()[2])
-    print('Analyse 2 res: {}, {}'.format(results.keys()[1], results.keys()[4]))
-    analyse_diff_res(results.values()[1], results.values()[4])
+    #print('Analyse 2 res: {}, {}'.format(results.keys()[1], results.keys()[4]))
+    #analyse_diff_res(results.values()[1], results.values()[4])

@@ -20,6 +20,8 @@
 % Get rid of annoying line under header.
 \renewcommand{\headrulewidth}{0pt}
 
+\newcommand{\ts}{\textsuperscript}
+
 \lhead{}
 \chead{}
 \rhead{}
@@ -79,7 +81,20 @@ Following (XX Matsuno Beckers Deleersnijder) the SWEs are solved on an Arakawa-C
 forward-backward time scheme. The Arakawa-C grid was chosen so that e.g. spatial derivatives of $u$
 in the $x$ direction would be available at the points where $\eta$ is calculated. The domain is
 taken to be the size of the $\eta$ grid points, as can be seen in Figure \ref{fig:arakawa_c_grid}.
-First $\eta$, $u$ then $v$ are calculated:
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=300px]{figures/arakawa_c_grid}
+    \caption{Shows where $\eta$, $u$ and $v$ are calculated on the Arakawa-C grid for $\Delta x =
+	\Delta y = 250000\, m$ (lower than the lowest resolution used in this project, for
+	illustration only). Note, $u$ is one bigger in the $x$ direction than $\eta$ (and similar
+	for $v$ in $y$ direction), and therefore the minimum and maximum $u$ coordinates lie
+	$\frac{\Delta x}{2}$ outside the domain (and similar for $v$). The red grid-point values
+	show values which are held at $0$ due to the boundary conditions. }
+    \label{fig:arakawa_c_grid}
+\end{figure}
+
+First $\eta$, $u$ then $v$ are calculated (in that order):
 
 \begin{align}
     \label{eqn:swe_arakawa1} 
@@ -92,7 +107,8 @@ First $\eta$, $u$ then $v$ are calculated:
     \gamma \Delta t v^n + \Delta t \frac{\tau_y}{\rho H}.
 \end{align}
 
-Second $\eta$, $v$ then $u$ are calculated:
+Second $\eta$, $v$ then $u$ are calculated (note, order of $u$ and $v$ calculations has been
+swapped):
 
 \begin{align}
     \label{eqn:swe_arakawa4} 
@@ -106,41 +122,83 @@ Second $\eta$, $v$ then $u$ are calculated:
 	\eta^{n+1}}{\partial x} - \gamma \Delta t u^{n+1} + \Delta t \frac{\tau_x}{\rho H}.
 \end{align}
 
-% Say something about Rossby radius of deformation and link to spatial resolution.
-% Justify timestep/etc.
-
+To calculate $u$ on the other two grids (see \ref{fig:arakawa_c_grid}), spatial averging must
+be used. E.g. to calculate $u$ on the $\eta$ grid, the average of two $u$ grid-points in the $x$
+direction must be used, and to calculate $u$ on the $v$ grid, four grid-points in the $x$ and $y$
+directions must be used. Similar calculations apply to $v$ and $\eta$ on the other grids.
+Derivatives are calculated using the two values on either side of the grid-point where they are
+needed (using the midpoint method which is 2nd order accurate, indeed this is the strength of the
+Arakawa-C grid).
 
 \section*{Task A}
 
+To model the Western Boundary Current (WBC), a sufficient number of grid-points must span this
+distance. If the size of the WBC is taken to be $\frac{1}{10}$ \ts{th} of the zonal extent of the
+domain, or \SI{100}{km}, and four grid-points are required across this to capture its variation,
+this would mean a minimum spatial resolution of $\Delta x = 25\, km$ should be used. In this Task,
+a value of $\Delta x = \Delta y = 20\, km$ was used.
+
+% TODO: Redo this section in light of dx = 10km being unstable.
+The fastest signals propagating in this system are gravity-inertia waves. These have a phase speed
+of $\sqrt{g H}$, and this can be treated as an upper bound for the CFL criterion, i.e. $\sqrt{g H}
+\frac{\Delta t}{\Delta x} <= 1$ will be a necessary condition for the scheme to be stable. In this
+task $\Delta t$ was taken to be \SI{139}{s} so as to just satisfy this criterion.
+
 \begin{figure}[ht!]
     \centering
-    \includegraphics[width=300px]{figures/arakawa_c_grid}
-    \caption{Shows where $\eta$, $u$ and $v$ are calculated on the Arakawa-C grid for $\Delta x =
-	\Delta y = 250000  m$ (lower than the lowest resolution used in this project, for
-	illustration only). Note, $u$ is one bigger in the $x$ direction than $\eta$ (and similar
-	for $v$ in $y$ direction), and therefore the minimum and maximum $u$ coordinates lie
-	$\frac{\Delta x}{2}$ outside the domain (and similar for $v$). The red grid-point values
-	show values which are held at $0$ due to the boundary conditions. }
-    \label{fig:arakawa_c_grid}
+    \includegraphics[width=300px]{figures/task_a}
+    \caption{Four plots showing $u$, $v$ and $\eta$ along three different zonal/meridional extents
+	after one day - (a), (b) and (c). Plot (d) shows $\eta$ over the whole domain after one
+    day.}
+    \label{fig:task_a}
 \end{figure}
+% Say something about Rossby radius of deformation and link to spatial resolution.
+% Justify timestep/etc.
 
+The model was run for one day, and various plots of $u$, $v$ and $\eta$ are shown in Figure
+\ref{fig:task_a}. Overall, an anti-clockwise gyre is set up, as can be seen in plots (a) and (b)
+because $u$ is negative along the southern boundary, and $v$ is positive along the western boundary.
+Plot (d) shows that the height perturbation, $\eta$, is almost symmetrical after one day, although
+anomalously high values can be seen in the northeast and southwest corners.
 
-\subsection*{Dispersive nature of CTCS}
+\section*{Task B}
 
-The shortwave oscillations in the CTCS solutions, as seen by oscillations to the left of the largest
-changes in gradient, are caused by the dispersive nature of CTCS. This can be explained by the
-dispersion relationship for CTCS. This dispersion relationship is derived by considering what
-happens to the amplification factor for CTCS, and can be used to show that the numerical phase
-velocity of the waves is given by:
+The energy stored in the gyre can be calculated by summing the contributions from the kinetic energy
+(terms one and two in the integrand in Equation \ref{eqn:energy}) and the gravitational potential
+energy (term three):
 
 \begin{equation}
-    \sin \alpha = c \sin k \Delta x
+    \label{eqn:energy} 
+    E(u, v, \eta) = \int_0^L \int_0^L \frac{1}{2} \rho ( H ( u^2 + v^2) + g \eta^2) dx dy
 \end{equation}
 
-\begin{equation}
-    \frac{u_n}{u} = \pm \frac{\alpha}{c k \Delta x}\\
-\end{equation}
+% TODO: CFL.
+This can be approximated over the domain using Simpson's rule in 2D. This can then be calculated for
+every timestep, as is shown in Figure \ref{fig:task_b_energy}. For this figure, the model was run at
+two resolutions: once as before, and once with $\Delta x = \Delta y = 10\, km$ (i.e. twice the
+spatial resolution) and $\Delta t = 30\, s$ so that the (strict) CFL criterion is still satisfied.
+The model was run for 100 days in each case, and it can be seen that the energy reaches a peak at
+around \SI{35}{days} before reducing by 2.05\%(1.26\%) for $\Delta x = 20$ \SI{}{km} ($\Delta x =
+10$ \SI{}{km}) over the next \SI{65}{days}.
 
+Given that the energy in the model is approximately constant after \SI{100}{days}, it can be
+compared to the steady state analytical solution as found in (XXX Musgrave). The only unknown in
+these equations is the value of $\eta_0$, for which the value of $\eta(0, \frac{L}{2})$ is used. 
+One way of doing these comparisons is to work out the perturbations of $u$, $v$ and $\eta$ as
+defined by e.g. $u' = u - u_{st}$, then calculating the energy using Equation \ref{eqn:energy} -
+$E(u', v', \eta')$. When $\Delta x = 20$ \SI{}{km}, the total energy is \SI{18.4}{TJ}, and when
+$\Delta x = 10$ \SI{}{km}, the total energy is \SI{1.99}{TJ}. Therefore, increasing the resolution
+increases the accuracy of the modelled steady state solution.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=300px]{figures/task_b_energy}
+    \caption{The effect of spatial resolution on the total energy of the system. Doubling the
+    spatial resolution (blue curve) increases the overall energy of the system. It also reduces the
+energy difference between the analytical steady state solution and the steady state obtained by
+running the SWE model for 100 days.}
+    \label{fig:task_b_energy}
+\end{figure}
 
 \section*{Appendix A}
 
