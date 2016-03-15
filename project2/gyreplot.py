@@ -1,4 +1,7 @@
 import pylab as plt
+import numpy as np
+
+from gyresim import init_settings, analytical_steady_state
 
 def analyse_one_day_result(result):
     # After 1 day:
@@ -40,7 +43,7 @@ def analyse_diff_res(res1, res2):
     print('{}: energy_diff={}'.format(res2['res'], res2['energy_diff']))
 
 
-def plot_analytical():
+def calc_analytical():
     settings = init_settings()
     L = settings['L']
     settings['plot'] = True
@@ -57,7 +60,8 @@ def plot_analytical():
     u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
     v0 = np.zeros((X.shape[0], X.shape[1] + 1))
 
-    eta_st, u_st, v_st = calc_analytical(0, X, Y, **settings)
+    eta_st, u_st, v_st = plot_analytical(0, X, Y, **settings)
+
 def plot_analytical(eta0, X, Y, **settings):
     eta_st, u_st, v_st = analytical_steady_state(eta0=eta0, X=X, Y=Y, **settings)
     if settings['plot']:
@@ -96,4 +100,39 @@ def plot_timestep(X, Y, u_grid, v_grid):
     except:
         pass
 
+def arakawa_c_figure(m=6, n=6, L=1e3):
+    #fig = plt.figure()
+    
+    #ax = fig.add_axes([-1, -1, m + 1, n + 1])
+    #ax.axis('off')
+    plt.clf()
+    dx = L/(m - 1)
+    dy = L/(n - 1)
+    plt.xlim((-1 * dx, m * dx))
+    plt.ylim((-1 * dy, n * dy))
+    plt.xlabel('x (km)')
+    plt.ylabel('y (km)')
 
+    plt.plot(0, 0, 'kx', label='$\eta$')
+    plt.plot(dx / 2, 0, 'ko', label='$u$')
+    plt.plot(0, dy / 2, 'k^', label='$v$')
+    plt.legend(numpoints=1, bbox_to_anchor=[1.05, 1.1])
+
+    for i in range(m):
+	for j in range(n):
+	    plt.plot(dx * i, dy * j, 'kx')
+    for i in range(m + 1):
+	for j in range(n):
+	    if i == 0 or i == m:
+		fmt = 'ro'
+	    else:
+		fmt = 'ko'
+	    plt.plot(dx * (i - 0.5), dy * j, fmt)
+    for i in range(m):
+	for j in range(n + 1):
+	    if j == 0 or j == m:
+		fmt = 'r^'
+	    else:
+		fmt = 'k^'
+	    plt.plot(dx * i, dy * (j - 0.5), fmt)
+    plt.savefig('figures/arakawa_c_grid.png')

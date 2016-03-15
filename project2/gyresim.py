@@ -1,7 +1,8 @@
 '''Systems supports gravity waves, this is the fastest thing in the sim, this
 will allow me to work out CFL conditions. This will be the phase speed of the
 gravity waves.'''
-from __future__ import division
+from __future__ import division, print_function
+from collections import OrderedDict
 
 import numpy as np
 import scipy.interpolate as interp
@@ -17,7 +18,7 @@ except ImportError:
 
 
 def init_settings(**kwargs):
-    settings = {}
+    settings = OrderedDict()
     settings['f0'] = 1e-4 # s^-1
     settings['B'] = 1e-11 # m^-1 s^-1
     settings['g'] = 10 # m s^-2
@@ -27,6 +28,15 @@ def init_settings(**kwargs):
     settings['tau0'] = 0.2 # N m^-2
     settings['L'] = 1e6 # m
     settings['plot'] = False
+    if kwargs:
+        # Sets and prints any settings that have been overridden.
+        print('setting: ', end='')
+        for key, value in kwargs.iteritems():
+            if key not in settings:
+                raise ValueError('key {} not recognised'.format(key))
+            print('{}={}, '.format(key, value), end='')
+            settings[key] = value
+        print('')
     return settings
 
 
@@ -91,6 +101,8 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
     u_prev = u.copy()
     v_prev = v.copy()
     for i, t in enumerate(times[1:]):
+        # Ensure 2nd order accuracy by calc'ing u, v at 1/2 timestep.
+        # Uses 
         # Work out u, v, at n+1/2.
         u0p5 = 1.5 * u - 0.5 * u_prev
         v0p5 = 1.5 * v - 0.5 * v_prev
@@ -115,6 +127,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
         Yi_v = Y_v - v * dt/2
 
         # Work out interp'd u, v at n+1/2
+        # Interp. handles values outside domain naturally
         ui0p5 = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi, Yi)
         vi0p5 = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi, Yi)
 
@@ -143,6 +156,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
         dudx_tilde = interp.RectBivariateSpline(x, y, dudx).ev(Xd, Yd)
         dvdy_tilde = interp.RectBivariateSpline(x, y, dvdy).ev(Xd, Yd)
 
+        # Check whether H -> H + eta.
         eta = eta_tilde - H * dt * (dudx_tilde + dvdy_tilde)
 
         for j in range(2):

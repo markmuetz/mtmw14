@@ -3,8 +3,8 @@ from collections import OrderedDict
 
 import pylab as plt
 
-from gyresim import init_settings, gyre_sim, gyre_sim_semi_lag
-from gyreplot import analyse_one_day_result, analyse_diff_res
+from gyresim import init_settings, gyre_sim, gyre_sim_semi_lag, energy
+from gyreplot import analyse_one_day_result, analyse_diff_res, plot_analytical, plot_timestep
 from gyreresults import ResultsManager
 
 
@@ -27,7 +27,7 @@ def tasks(run_controls):
         else:
             X, Y, times, eta, u, v, Es = sim(0, timelength, dt, dx, dy, 
                                              plot_timestep=plot_timestep, **settings)
-            eta_st, u_st, v_st = calc_analytical(eta[0, eta.shape[1]/2], X, Y, **settings)
+            eta_st, u_st, v_st = plot_analytical(eta[0, eta.shape[1]/2], X, Y, **settings)
 
             u_grid = (u[:-1, :] + u[1:, :]) / 2
             v_grid = (v[:, :-1] + v[:, 1:]) / 2
