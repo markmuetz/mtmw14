@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  15 MAR 2016 21:14
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  20 MAR 2016 14:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -838,42 +838,54 @@ Package pdftex.def Info: figures/arakawa_c_grid.png used on input line 87.
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] <figures/task_a.png, id=15
-, 578.16pt x 433.62pt>
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2 <./figures/arakawa_c_gr
+id.png>]
+<figures/task_a.png, id=19, 578.16pt x 433.62pt>
 File: figures/task_a.png Graphic file (type png)
-
-<use figures/task_a.png>
-Package pdftex.def Info: figures/task_a.png used on input line 149.
+ <use figures/task_a.png>
+Package pdftex.def Info: figures/task_a.png used on input line 155.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
- [2 <./figures/arakawa_c_grid.png>]
-<figures/task_b_energy.png, id=20, 578.16pt x 433.62pt>
+
+[3 <./figures/task_a.png>]
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 236.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+<figures/task_b_energy.png, id=25, 578.16pt x 433.62pt>
 File: figures/task_b_energy.png Graphic file (type png)
 
 <use figures/task_b_energy.png>
-Package pdftex.def Info: figures/task_b_energy.png used on input line 195.
+Package pdftex.def Info: figures/task_b_energy.png used on input line 246.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
- [3 <./figures/task_a.png>] [4 <./figures/task_b_energy.png>] (_build/project2.
-aux) ) 
+ [4] [5 <./figures/task_b_energy.png>]
+(_build/project2.aux) ) 
 Here is how much of TeX's memory you used:
- 12740 strings out of 494765
- 259871 string characters out of 6175712
- 291799 words of memory out of 5000000
- 15915 multiletter control sequences out of 15000+600000
- 6108 words of font info for 24 fonts, out of 8000000 for 9000
+ 12796 strings out of 494765
+ 260601 string characters out of 6175712
+ 291817 words of memory out of 5000000
+ 15957 multiletter control sequences out of 15000+600000
+ 9380 words of font info for 35 fonts, out of 8000000 for 9000
  80 hyphenation exceptions out of 8191
- 39i,16n,43p,10421b,621s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmsy7.pfb>
-Output written on _build/project2.pdf (4 pages, 244901 bytes).
+ 39i,16n,43p,10421b,857s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.e
+nc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+msy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb>
+Output written on _build/project2.pdf (5 pages, 284358 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
+ 80 PDF objects out of 1000 (max. 8388607)
+ 53 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

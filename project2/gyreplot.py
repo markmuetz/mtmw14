@@ -72,6 +72,64 @@ def analyse_diff_res(res1, res2):
     plt.savefig('figures/task_b_energy.png')
 
 
+def analyse_diff_res2(res1, res2, res3, res4):
+    plt.figure(95)
+    plt.clf()
+    #plt.title('Energy vs time')
+    f, (ax1, ax2) = plt.subplots(2, 1)
+    ax1.plot(res3['sim'][0] / 86400, np.array(res3['sim'][4]) / 1e15, 
+             label=res3['res'])
+    ax1.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
+             label=res4['res'])
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('energy (PJ)')
+    ax1.legend(loc='lower right')
+
+    ax2.plot(res3['sim'][0] / 86400, np.array(res3['sim'][4]) / 1e15, 
+             label=res3['res'])
+    ax2.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
+             label=res4['res'])
+    ax2.set_xlim((30, 50))
+    ax2.set_ylim((2.65, 2.85))
+    ax2.set_xlabel('time (days)')
+    ax2.set_ylabel('energy (PJ)')
+
+    print('{}: energy_diff={}'.format(res3['res'], res3['energy_diff']))
+    print('{}: energy_diff={}'.format(res4['res'], res4['energy_diff']))
+
+    pd1 = (np.array(res3['sim'][4]).max() - res3['sim'][4][-1] ) / np.array(res3['sim'][4]).max() * 100
+    pd2 = (np.array(res4['sim'][4]).max() - res4['sim'][4][-1] ) / np.array(res4['sim'][4]).max() * 100
+    print('% diff 1 {}'.format(pd1))
+    print('% diff 2 {}'.format(pd2))
+
+    plt.savefig('figures/task_d_energy.png')
+
+    f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    f.subplots_adjust(hspace=0.25, wspace=0.25, right=0.8)
+
+    X, Y = res1['grid']
+    ax1.set_title('(a) $\eta$ after 1 day - Eul.')
+    ax1.contourf(X/1e3, Y/1e3, res1['sim'][1], 100, vmin=-0.02, vmax=0.02)
+    ax2.set_title('(b) $\eta$ after 1 day - S-L')
+    cf2 = ax2.contourf(X/1e3, Y/1e3, res2['sim'][1], 100, vmin=-0.02, vmax=0.02)
+
+    cbar_ax1 = f.add_axes([0.85, 0.55, 0.05, 0.4])
+    f.colorbar(cf2, cax=cbar_ax1)
+
+    ax3.set_title('(c) $\eta$ after 50 day - Eul.')
+    ax3.contourf(X/1e3, Y/1e3, res3['sim'][1], 100, vmin=-0.15, vmax=0.2)
+    ax4.set_title('(d) $\eta$ after 50 days - S-L')
+    cf4 = ax4.contourf(X/1e3, Y/1e3, res4['sim'][1], 100, vmin=-0.15, vmax=0.2)
+
+    ax3.set_xlabel('x (km)') 
+    ax4.set_xlabel('x (km)') 
+    ax1.set_ylabel('y (km)') 
+    ax3.set_ylabel('y (km)') 
+
+    cbar_ax2 = f.add_axes([0.85, 0.05, 0.05, 0.4])
+    f.colorbar(cf4, cax=cbar_ax2)
+    plt.savefig('figures/task_d_eta.png')
+
 def calc_analytical():
     settings = init_settings()
     L = settings['L']

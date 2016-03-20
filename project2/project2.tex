@@ -55,7 +55,7 @@ Water Equations (SWEs), linearised about a resting state:
 
 Here $\eta$ represents the height perturbation, $u$ and $v$ represent the column averaged zonal and meridional
 velocity perturbations. $H$ is the average height, $f_0$ and $\beta$ are the Coriolis and $\beta$
-parameters, $g$ is the acceleration due to gravity, $gamma$ represents drag processes, and $\tau_x$
+parameters, $g$ is the acceleration due to gravity, $\gamma$ represents drag processes, and $\tau_x$
 and $\tau_y$ represent the wind stress forcings. The equations were solved using a square domain,
 with the sides being given by $L$.  The values used for the parameters were: 
 
@@ -107,7 +107,7 @@ First $\eta$, $u$ then $v$ are calculated (in that order):
     \gamma \Delta t v^n + \Delta t \frac{\tau_y}{\rho H}.
 \end{align}
 
-Second $\eta$, $v$ then $u$ are calculated (note, order of $u$ and $v$ calculations has been
+Second $\eta$, $v$ then $u$ are calculated (note, the order of $u$ and $v$ calculations has been
 swapped):
 
 \begin{align}
@@ -135,14 +135,20 @@ Arakawa-C grid).
 To model the Western Boundary Current (WBC), a sufficient number of grid-points must span this
 distance. If the size of the WBC is taken to be $\frac{1}{10}$ \ts{th} of the zonal extent of the
 domain, or \SI{100}{km}, and four grid-points are required across this to capture its variation,
-this would mean a minimum spatial resolution of $\Delta x = 25\, km$ should be used. In this Task,
-a value of $\Delta x = \Delta y = 20\, km$ was used.
+this would mean a minimum spatial resolution of $\Delta x = 25\, km$ should be used. In this Task, a
+value of $\Delta x = \Delta y = 20\, km$ was used. Kinematic boundary conditions are used throughout
+this study, i.e. $u$ is held at $0$ on the eastern and western boundaries, $v$ is held at $0$ on the
+northern and southern boundaries.
 
-% TODO: Redo this section in light of dx = 10km being unstable.
 The fastest signals propagating in this system are gravity-inertia waves. These have a phase speed
-of $\sqrt{g H}$, and this can be treated as an upper bound for the CFL criterion, i.e. $\sqrt{g H}
-\frac{\Delta t}{\Delta x} <= 1$ will be a necessary condition for the scheme to be stable. In this
-task $\Delta t$ was taken to be \SI{139}{s} so as to just satisfy this criterion.
+of $\sqrt{g H}$, and following XX Beckers\dots this can be used to calculate an upper bound for the
+CFL criterion, i.e. $\sqrt{g H} \frac{\Delta t}{\Delta x} <= \frac{1}{4}$ will be a necessary
+condition for the scheme to be stable. In practice, at the first resolution, it was found that the
+less stringent requirement of $\sqrt{g H} \frac{\Delta t}{\Delta x} <= 1$ was necessary to ensure
+numerical stability (from empirical experimentation). The first CFL criterion will be referred to as
+the strict criterion, and the second the lax criterion. In light of this, in this task $\Delta t$ was
+taken to be \SI{139}{s} so as to just satisfy this lax criterion. Satisfying the lax criterion
+allows for a larger timestep and therefore less time is needed to run the simulations.
 
 \begin{figure}[ht!]
     \centering
@@ -175,20 +181,66 @@ energy (term three):
 % TODO: CFL.
 This can be approximated over the domain using Simpson's rule in 2D. This can then be calculated for
 every timestep, as is shown in Figure \ref{fig:task_b_energy}. For this figure, the model was run at
-two resolutions: once as before, and once with $\Delta x = \Delta y = 10\, km$ (i.e. twice the
-spatial resolution) and $\Delta t = 30\, s$ so that the (strict) CFL criterion is still satisfied.
-The model was run for 100 days in each case, and it can be seen that the energy reaches a peak at
-around \SI{35}{days} before reducing by 2.05\%(1.26\%) for $\Delta x = 20$ \SI{}{km} ($\Delta x =
-10$ \SI{}{km}) over the next \SI{65}{days}.
+two resolutions: once as before with $\Delta x = \Delta y = 10\, km$ , and once with $\Delta x =
+\Delta y = 10\, km$ (i.e. twice the spatial resolution). A time step of $\Delta t = 30\, s$ was use
+in both cases, so that the strict CFL criterion is still satisfied for the high resolution run and
+that only changes in the spatial resolution are being compared between the two runs. (It was found
+that running the model at the higher resolution with only the lax criterion being satisfied lead to
+numerical instability after around \SI{50}{days}.) The model was run for 100 days in each case, and
+it can be seen that the energy reaches a peak at around \SI{35}{days} before reducing by
+2.05\%(1.26\%) for $\Delta x = 20$ \SI{}{km} ($\Delta x = 10$ \SI{}{km}) over the next
+\SI{65}{days}.
 
+\section*{Task C}
+
+% Run these with same dt.
 Given that the energy in the model is approximately constant after \SI{100}{days}, it can be
 compared to the steady state analytical solution as found in (XXX Musgrave). The only unknown in
-these equations is the value of $\eta_0$, for which the value of $\eta(0, \frac{L}{2})$ is used. 
-One way of doing these comparisons is to work out the perturbations of $u$, $v$ and $\eta$ as
-defined by e.g. $u' = u - u_{st}$, then calculating the energy using Equation \ref{eqn:energy} -
-$E(u', v', \eta')$. When $\Delta x = 20$ \SI{}{km}, the total energy is \SI{18.4}{TJ}, and when
-$\Delta x = 10$ \SI{}{km}, the total energy is \SI{1.99}{TJ}. Therefore, increasing the resolution
-increases the accuracy of the modelled steady state solution.
+these equations is the value of $\eta_0$, for which the modelled value of $\eta(0, \frac{L}{2})$ is
+used. One way of doing these comparisons is to work out the perturbations of $u$, $v$ and $\eta$ as
+defined by e.g. $u' = u - u_{st}$, then calculating the energy difference using Equation
+\ref{eqn:energy} - $E(u', v', \eta')$. Using this equation, when $\Delta x = 20$ \SI{}{km}, the
+total energy difference between the analytical and the modelled steady state solution is
+\SI{18.4}{TJ}, and when $\Delta x = 10$ \SI{}{km}, the total energy difference is \SI{4.98}{TJ}.
+Therefore, increasing the resolution increases the accuracy of the modelled steady state solution.
+The 2\ts{nd} order spatial accuracy of the 2D SWE numerical model on an Arakawa-C grid can be seen
+from the fact that when the resolution is doubled, the error, as measured by the total energy
+difference, is approximately four times smaller. 
+
+\section*{Task C}
+
+One way of solving a non-linear version of the SWE equations is to implement a semi-Lagrangian
+numerical scheme. Here the full Lagrangian rates of change ($\frac{D}{Dt}$ as opposed to
+$\frac{\partial}{\partial t}$) are used, and the departure point of each of each grid-point is
+calculated to work out the previous value of $u$, $v$ and $\eta$ to be used. It is therefore
+necessary to calculate the departure points for each of the $u$, $v$ and $\eta$ grids used in the
+Arakawa-C grid.  To calculate the departure point, the $\boldsymbol{u} =  ($u$, $v$)$ field at two
+previous timesteps is used. Following Durran pp366-368, first, a 2\ts{nd} order estimate for
+$\boldsymbol{u}^{n + \frac{1}{2}}$ is calculated using $\boldsymbol{u}^{n + \frac{1}{2}} =
+\frac{3}{2}  \boldsymbol{u}^{n} - \frac{1}{2} \boldsymbol{u}^{n-1}$. This is then used to calculate
+a value of $\tilde{\boldsymbol{u}}$, the departure point, through the use of an intermediate
+departure point using the following formulae:
+
+\begin{align}
+    \label{eqn:sl_update1} 
+    \boldsymbol{x_{*}} = \boldsymbol{x}^{n+1} - \boldsymbol{u}(\boldsymbol{x}^{n+1}, t^n)
+    \frac{\Delta t}{2},\\
+    \label{eqn:sl_update2} 
+    \boldsymbol{\tilde{x}}^n = \boldsymbol{x}^{n+1} - \boldsymbol{u}(\boldsymbol{x_{*}},
+    t^{n+\frac{1}{2}}) \Delta t.\\
+\end{align}
+
+The departure points tell us where to take the values of $u$, $v$ and $\eta$ from in the previous
+timestep. However, it is unlikely that these departure points will lie on grid-points, therefore it
+is necessary to interpolate between the values of these three fields to calculate the values at the
+departure points. This is achieved using the \lstinline[basicstyle=\ttfamily]|RectBivariateSpline|
+class from the \lstinline[basicstyle=\ttfamily]|scipy.interpolate| namespace. By default this uses a
+2D cubic spline interpolation, and this was used to implement the interpolation of the three fields
+in this Task. It also gracefully handles the interpolation of points which are outside of its domain
+by using the value of the nearest point in the domain of interpolation, which is useful for this
+study. Once the departure points have been calculated for the three grids, the same forward-backward
+time scheme used before is used to update the three fields. 
+
 
 \begin{figure}[ht!]
     \centering
