@@ -78,17 +78,17 @@ def analyse_diff_res2(res1, res2, res3, res4):
     #plt.title('Energy vs time')
     f, (ax1, ax2) = plt.subplots(2, 1)
     ax1.plot(res3['sim'][0] / 86400, np.array(res3['sim'][4]) / 1e15, 
-             label=res3['res'])
+             label='Eulerian')
     ax1.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
-             label=res4['res'])
+             label='semi-Lagrangian')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('energy (PJ)')
     ax1.legend(loc='lower right')
 
     ax2.plot(res3['sim'][0] / 86400, np.array(res3['sim'][4]) / 1e15, 
-             label=res3['res'])
+             label='Eulerian')
     ax2.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
-             label=res4['res'])
+             label='semi-Lagrangian')
     ax2.set_xlim((30, 50))
     ax2.set_ylim((2.65, 2.85))
     ax2.set_xlabel('time (days)')

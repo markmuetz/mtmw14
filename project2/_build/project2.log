@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  20 MAR 2016 14:22
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  22 MAR 2016 21:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -718,57 +718,17 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \f@ncyO@olf=\skip81
 \f@ncyO@orf=\skip82
 )
-(_build/project2.aux)
-\openout1 = `project2.aux'.
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+Package: biblatex 2013/11/25 v2.8a programmable bibliographies (PK/JW/AB)
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 36.
- (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
-File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex2.sty
+Package: biblatex2 2013/11/25 v2.8a programmable bibliographies (biber) (PK/JW/
+AB)
+
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2011/01/03 v2.1 e-TeX tools for LaTeX
+\etb@tempcnta=\count162
 )
-LaTeX Font Info:    ... okay on input line 36.
-
-(/usr/share/texmf/tex/latex/beamer/base/translator/dicts/translator-basic-dicti
-onary/translator-basic-dictionary-English.dict
-Dictionary: translator-basic-dictionary, Language: English 
-)
-(/usr/share/texlive/texmf-dist/tex/latex/siunitx/config/siunitx-abbreviations.c
-fg
-File: siunitx-abbreviations.cfg 2013/07/31 v2.5s siunitx: Abbreviated units
-) (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count162
-\scratchdimen=\dimen173
-\scratchbox=\box52
-\nofMPsegments=\count163
-\nofMParguments=\count164
-\everyMPshowfont=\toks29
-\MPscratchCnt=\count165
-\MPscratchDim=\dimen174
-\MPnumerator=\count166
-\makeMPintoPDFobject=\count167
-\everyMPtoPDFconversion=\toks30
-) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
-Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
-
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
-Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
-Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
-))
 (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
 
@@ -782,6 +742,255 @@ Package etexcmds Info: Could not find \expanded.
 (etexcmds)             that some package has redefined \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 )))
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count163
+
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+\c@tabx@nest=\count164
+\c@listtotal=\count165
+\c@listcount=\count166
+\c@liststart=\count167
+\c@liststop=\count168
+\c@citecount=\count169
+\c@citetotal=\count170
+\c@multicitecount=\count171
+\c@multicitetotal=\count172
+\c@instcount=\count173
+\c@maxnames=\count174
+\c@minnames=\count175
+\c@maxitems=\count176
+\c@minitems=\count177
+\c@citecounter=\count178
+\c@savedcitecounter=\count179
+\c@uniquelist=\count180
+\c@uniquename=\count181
+\c@refsection=\count182
+\c@refsegment=\count183
+\c@maxextratitle=\count184
+\c@maxextratitleyear=\count185
+\c@maxextrayear=\count186
+\c@maxextraalpha=\count187
+\c@abbrvpenalty=\count188
+\c@highnamepenalty=\count189
+\c@lownamepenalty=\count190
+\c@maxparens=\count191
+\c@parenlevel=\count192
+\blx@tempcnta=\count193
+\blx@tempcntb=\count194
+\blx@tempcntc=\count195
+\blx@maxsection=\count196
+\blx@maxsegment@0=\count197
+\blx@notetype=\count198
+\blx@parenlevel@text=\count199
+\blx@parenlevel@foot=\count200
+\blx@sectionciteorder@0=\count201
+\labelnumberwidth=\skip83
+\labelalphawidth=\skip84
+\shorthandwidth=\skip85
+\biblabelsep=\skip86
+\bibitemsep=\skip87
+\bibnamesep=\skip88
+\bibinitsep=\skip89
+\bibparsep=\skip90
+\bibhang=\skip91
+\blx@bcfin=\read3
+\blx@bcfout=\write3
+Normal \count register pool exhausted, switching to extended pool.
+\c@mincomprange=\count277
+\c@maxcomprange=\count278
+\c@mincompwidth=\count279
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def)
+Package biblatex Info: Trying to load biblatex style data model...
+Package biblatex Info: ... file 'authoryear.dbx' not found.
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count280
+\c@savedafterword=\count281
+\c@annotator=\count282
+\c@savedannotator=\count283
+\c@author=\count284
+\c@savedauthor=\count285
+\c@bookauthor=\count286
+\c@savedbookauthor=\count287
+\c@commentator=\count288
+\c@savedcommentator=\count289
+\c@editor=\count290
+\c@savededitor=\count291
+\c@editora=\count292
+\c@savededitora=\count293
+\c@editorb=\count294
+\c@savededitorb=\count295
+\c@editorc=\count296
+\c@savededitorc=\count297
+\c@foreword=\count298
+\c@savedforeword=\count299
+\c@holder=\count300
+\c@savedholder=\count301
+\c@introduction=\count302
+\c@savedintroduction=\count303
+\c@namea=\count304
+\c@savednamea=\count305
+\c@nameb=\count306
+\c@savednameb=\count307
+\c@namec=\count308
+\c@savednamec=\count309
+\c@shortauthor=\count310
+\c@savedshortauthor=\count311
+\c@shorteditor=\count312
+\c@savedshorteditor=\count313
+\c@translator=\count314
+\c@savedtranslator=\count315
+\c@labelname=\count316
+\c@savedlabelname=\count317
+\c@institution=\count318
+\c@savedinstitution=\count319
+\c@lista=\count320
+\c@savedlista=\count321
+\c@listb=\count322
+\c@savedlistb=\count323
+\c@listc=\count324
+\c@savedlistc=\count325
+\c@listd=\count326
+\c@savedlistd=\count327
+\c@liste=\count328
+\c@savedliste=\count329
+\c@listf=\count330
+\c@savedlistf=\count331
+\c@location=\count332
+\c@savedlocation=\count333
+\c@organization=\count334
+\c@savedorganization=\count335
+\c@origlocation=\count336
+\c@savedoriglocation=\count337
+\c@origpublisher=\count338
+\c@savedorigpublisher=\count339
+\c@publisher=\count340
+\c@savedpublisher=\count341
+\c@language=\count342
+\c@savedlanguage=\count343
+\c@pageref=\count344
+\c@savedpageref=\count345
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def
+File: blx-compat.def 2013/11/25 v2.8a biblatex compatibility (PK/JW/AB)
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def
+File: biblatex.def 
+\c@textcitecount=\count346
+\c@textcitetotal=\count347
+\c@textcitemaxnames=\count348
+\c@biburlnumpenalty=\count349
+\c@biburlucpenalty=\count350
+\c@biburllcpenalty=\count351
+\c@smartand=\count352
+)
+Package biblatex Info: Trying to load bibliography style 'authoryear'...
+Package biblatex Info: ... file 'authoryear.bbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/authoryear.bbx
+File: authoryear.bbx 2013/11/25 v2.8a biblatex bibliography style (PK/JW/AB)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2013/11/25 v2.8a biblatex bibliography style (PK/JW/AB)
+\c@bbx:relatedcount=\count353
+\c@bbx:relatedtotal=\count354
+))
+Package biblatex Info: Trying to load citation style 'authoryear'...
+Package biblatex Info: ... file 'authoryear.cbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/authoryear.cbx
+File: authoryear.cbx 2013/11/25 v2.8a biblatex citation style (PK/JW/AB)
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg
+File: biblatex.cfg 
+)))
+Package biblatex Info: Trying to load language 'english'...
+Package biblatex Info: ... file 'english.lbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/english.lbx
+File: english.lbx 2013/11/25 v2.8a biblatex localization (PK/JW/AB)
+)
+\@quotelevel=\count355
+\@quotereset=\count356
+
+(_build/project2.aux)
+\openout1 = `project2.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 42.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 42.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 42.
+
+(/usr/share/texmf/tex/latex/beamer/base/translator/dicts/translator-basic-dicti
+onary/translator-basic-dictionary-English.dict
+Dictionary: translator-basic-dictionary, Language: English 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/siunitx/config/siunitx-abbreviations.c
+fg
+File: siunitx-abbreviations.cfg 2013/07/31 v2.5s siunitx: Abbreviated units
+) (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count357
+\scratchdimen=\dimen173
+\scratchbox=\box52
+\nofMPsegments=\count358
+\nofMParguments=\count359
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count360
+\MPscratchDim=\dimen174
+\MPnumerator=\count361
+\makeMPintoPDFobject=\count362
+\everyMPtoPDFconversion=\toks30
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
 Package grfext Info: Graphics extension search list:
 (grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
@@ -791,7 +1000,7 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\c@lstlisting=\count168
+\c@lstlisting=\count363
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -827,13 +1036,24 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c__siunitx_mathsf_int=\count169
-\c__siunitx_mathtt_int=\count170
-<figures/arakawa_c_grid.png, id=1, 578.16pt x 433.62pt>
+Package biblatex Info: No input encoding detected.
+(biblatex)             Assuming 'ascii'.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'ascii'.
+\openout3 = `project2.bcf'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'project2.bbl' found.
+(_build/project2.bbl)
+Package biblatex Info: Reference section=0 on input line 42.
+Package biblatex Info: Reference segment=0 on input line 42.
+\c__siunitx_mathsf_int=\count364
+\c__siunitx_mathtt_int=\count365
+ <figures/arakawa_c_grid.png, id=1, 578.16pt x 433.62pt>
 File: figures/arakawa_c_grid.png Graphic file (type png)
 
 <use figures/arakawa_c_grid.png>
-Package pdftex.def Info: figures/arakawa_c_grid.png used on input line 87.
+Package pdftex.def Info: figures/arakawa_c_grid.png used on input line 91.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
  [1
 
@@ -843,49 +1063,68 @@ id.png>]
 <figures/task_a.png, id=19, 578.16pt x 433.62pt>
 File: figures/task_a.png Graphic file (type png)
  <use figures/task_a.png>
-Package pdftex.def Info: figures/task_a.png used on input line 155.
+Package pdftex.def Info: figures/task_a.png used on input line 174.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
 
 [3 <./figures/task_a.png>]
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 236.
+<figures/task_b_energy.png, id=25, 578.16pt x 433.62pt>
+File: figures/task_b_energy.png Graphic file (type png)
+
+<use figures/task_b_energy.png>
+Package pdftex.def Info: figures/task_b_energy.png used on input line 230.
+(pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
+ [4 <./figures/task_b_energy.png>]
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 265.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<figures/task_b_energy.png, id=25, 578.16pt x 433.62pt>
-File: figures/task_b_energy.png Graphic file (type png)
+<figures/task_d_eta.png, id=32, 578.16pt x 433.62pt>
+File: figures/task_d_eta.png Graphic file (type png)
 
-<use figures/task_b_energy.png>
-Package pdftex.def Info: figures/task_b_energy.png used on input line 246.
+<use figures/task_d_eta.png>
+Package pdftex.def Info: figures/task_d_eta.png used on input line 282.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
- [4] [5 <./figures/task_b_energy.png>]
-(_build/project2.aux) ) 
+
+<figures/task_d_energy.png, id=33, 578.16pt x 433.62pt>
+File: figures/task_d_energy.png Graphic file (type png)
+
+<use figures/task_d_energy.png>
+Package pdftex.def Info: figures/task_d_energy.png used on input line 296.
+(pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
+ [5 <./figures/task_d_eta.png>] [6 <./figures/task_d_energy.png>] (_build/proje
+ct2.aux)
+Package logreq Info: Writing requests to 'project2.run.xml'.
+\openout1 = `project2.run.xml'.
+
+ ) 
 Here is how much of TeX's memory you used:
- 12796 strings out of 494765
- 260601 string characters out of 6175712
- 291817 words of memory out of 5000000
- 15957 multiletter control sequences out of 15000+600000
- 9380 words of font info for 35 fonts, out of 8000000 for 9000
+ 17915 strings out of 494765
+ 350868 string characters out of 6175712
+ 713851 words of memory out of 5000000
+ 21017 multiletter control sequences out of 15000+600000
+ 9726 words of font info for 36 fonts, out of 8000000 for 9000
  80 hyphenation exceptions out of 8191
- 39i,16n,43p,10421b,857s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.e
-nc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-msy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb>
-Output written on _build/project2.pdf (5 pages, 284358 bytes).
+ 43i,16n,52p,10421b,953s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb>
+Output written on _build/project2.pdf (6 pages, 417294 bytes).
 PDF statistics:
- 80 PDF objects out of 1000 (max. 8388607)
- 53 compressed objects within 1 object stream
+ 91 PDF objects out of 1000 (max. 8388607)
+ 58 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

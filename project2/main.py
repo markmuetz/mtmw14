@@ -53,11 +53,11 @@ if __name__ == '__main__':
     plt.ion()
     run_controls = [('A', 'gyre_sim', 86400, 2e4, 139), 
                     ('C', 'gyre_sim', 86400 * 50, 2e4, 139),
-                    ('C', 'gyre_sim', 86400 * 100, 2e4, 30),
+                    ('C', 'gyre_sim', 86400 * 100, 2e4, 49),
                     #('C', 'gyre_sim', 86400 * 100, 1e4, 69), # Unstable!
 		    # N.B. This is stable, it meets the more
 		    # stringent stability requirements in Beckers and Deleersnijder.
-                    ('C', 'gyre_sim', 86400 * 100, 1e4, 30), 
+                    ('C', 'gyre_sim', 86400 * 100, 1e4, 49), 
                     ('D', 'gyre_sim_semi_lag', 86400, 2e4, 139),
                     ('D', 'gyre_sim_semi_lag', 86400 * 50, 2e4, 139)]
     results = tasks(run_controls)

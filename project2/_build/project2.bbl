@@ -1,0 +1,68 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \sortlist{entry}{nyt}
+    \entry{beckers1993stability}{article}{}
+      \name{labelname}{2}{}{%
+        {{uniquename=0,hash=26be1e17055a784000141d1625ea2296}{Beckers}{B\bibinitperiod}{J-M}{J\bibinithyphendelim M\bibinitperiod}{}{}{}{}}%
+        {{uniquename=0,hash=28b12374ac51d72e773d70761e17fc6f}{Deleersnijder}{D\bibinitperiod}{E}{E\bibinitperiod}{}{}{}{}}%
+      }
+      \name{author}{2}{}{%
+        {{uniquename=0,hash=26be1e17055a784000141d1625ea2296}{Beckers}{B\bibinitperiod}{J-M}{J\bibinithyphendelim M\bibinitperiod}{}{}{}{}}%
+        {{uniquename=0,hash=28b12374ac51d72e773d70761e17fc6f}{Deleersnijder}{D\bibinitperiod}{E}{E\bibinitperiod}{}{}{}{}}%
+      }
+      \strng{namehash}{0289ba29c36c31cf930c0716a67dc5dd}
+      \strng{fullhash}{0289ba29c36c31cf930c0716a67dc5dd}
+      \field{sortinit}{B}
+      \field{labelyear}{1993}
+      \field{datelabelsource}{}
+      \field{labeltitle}{Stability of a FBTCS scheme applied to the propagation of shallow-water inertia-gravity waves on various space grids}
+      \field{journaltitle}{Journal of computational physics}
+      \field{number}{1}
+      \field{title}{Stability of a FBTCS scheme applied to the propagation of shallow-water inertia-gravity waves on various space grids}
+      \field{year}{1993}
+    \endentry
+    \entry{musgrave1985numerical}{article}{}
+      \name{labelname}{1}{}{%
+        {{uniquename=0,hash=8450e005aa86a21272d44e9d6841e6b5}{Musgrave}{M\bibinitperiod}{D\bibnamedelima L}{D\bibinitperiod\bibinitdelim L\bibinitperiod}{}{}{}{}}%
+      }
+      \name{author}{1}{}{%
+        {{uniquename=0,hash=8450e005aa86a21272d44e9d6841e6b5}{Musgrave}{M\bibinitperiod}{D\bibnamedelima L}{D\bibinitperiod\bibinitdelim L\bibinitperiod}{}{}{}{}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley Online Library}%
+      }
+      \strng{namehash}{8450e005aa86a21272d44e9d6841e6b5}
+      \strng{fullhash}{8450e005aa86a21272d44e9d6841e6b5}
+      \field{sortinit}{M}
+      \field{labelyear}{1985}
+      \field{datelabelsource}{}
+      \field{labeltitle}{A numerical study of the roles of subgyre-scale mixing and the western boundary current on homogenization of a passive tracer}
+      \field{journaltitle}{Journal of Geophysical Research: Oceans}
+      \field{number}{C4}
+      \field{title}{A numerical study of the roles of subgyre-scale mixing and the western boundary current on homogenization of a passive tracer}
+      \field{volume}{90}
+      \field{year}{1985}
+      \field{pages}{7037\bibrangedash 7043}
+    \endentry
+  \endsortlist
+\endrefsection
+\endinput
+

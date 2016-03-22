@@ -22,6 +22,12 @@
 
 \newcommand{\ts}{\textsuperscript}
 
+% Harvard style references.
+\usepackage[backend=biber,style=authoryear,sorting=nyt,dashed=false]{biblatex}
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+
+\addbibresource{references.bib} % note the .bib is required
+
 \lhead{}
 \chead{}
 \rhead{}
@@ -59,7 +65,6 @@ parameters, $g$ is the acceleration due to gravity, $\gamma$ represents drag pro
 and $\tau_y$ represent the wind stress forcings. The equations were solved using a square domain,
 with the sides being given by $L$.  The values used for the parameters were: 
 
-
 \begin{center}
     \begin{tabular}{ c|r l } 
 	parameter & value & unit \\ 
@@ -76,11 +81,10 @@ with the sides being given by $L$.  The values used for the parameters were:
     \end{tabular}
 \end{center}
 
-
-Following (XX Matsuno Beckers Deleersnijder) the SWEs are solved on an Arakawa-C grid using the
+Following \textcite{beckers1993stability}, the SWEs are solved on an Arakawa-C grid using the
 forward-backward time scheme. The Arakawa-C grid was chosen so that e.g. spatial derivatives of $u$
 in the $x$ direction would be available at the points where $\eta$ is calculated. The domain is
-taken to be the size of the $\eta$ grid points, as can be seen in Figure \ref{fig:arakawa_c_grid}.
+taken to be the size of the $\eta$ grid points, as can be seen in Fig. \ref{fig:arakawa_c_grid}.
 
 \begin{figure}[ht!]
     \centering
@@ -122,7 +126,7 @@ swapped):
 	\eta^{n+1}}{\partial x} - \gamma \Delta t u^{n+1} + \Delta t \frac{\tau_x}{\rho H}.
 \end{align}
 
-To calculate $u$ on the other two grids (see \ref{fig:arakawa_c_grid}), spatial averging must
+To calculate $u$ on the other two grids (see Fig. \ref{fig:arakawa_c_grid}), spatial averging must
 be used. E.g. to calculate $u$ on the $\eta$ grid, the average of two $u$ grid-points in the $x$
 direction must be used, and to calculate $u$ on the $v$ grid, four grid-points in the $x$ and $y$
 directions must be used. Similar calculations apply to $v$ and $\eta$ on the other grids.
@@ -141,14 +145,29 @@ this study, i.e. $u$ is held at $0$ on the eastern and western boundaries, $v$ i
 northern and southern boundaries.
 
 The fastest signals propagating in this system are gravity-inertia waves. These have a phase speed
-of $\sqrt{g H}$, and following XX Beckers\dots this can be used to calculate an upper bound for the
-CFL criterion, i.e. $\sqrt{g H} \frac{\Delta t}{\Delta x} <= \frac{1}{4}$ will be a necessary
-condition for the scheme to be stable. In practice, at the first resolution, it was found that the
-less stringent requirement of $\sqrt{g H} \frac{\Delta t}{\Delta x} <= 1$ was necessary to ensure
-numerical stability (from empirical experimentation). The first CFL criterion will be referred to as
-the strict criterion, and the second the lax criterion. In light of this, in this task $\Delta t$ was
-taken to be \SI{139}{s} so as to just satisfy this lax criterion. Satisfying the lax criterion
-allows for a larger timestep and therefore less time is needed to run the simulations.
+of $\sqrt{g H}$, and following \textcite{beckers1993stability}, this can be used to calculate an
+upper bound for the CFL criterion, i.e.:
+
+\begin{equation}
+    \label{eqn:cfl_strict} 
+    \sqrt{(\sqrt{g H} \frac{\Delta t}{\Delta x})^2 + (\sqrt{g H} \frac{\Delta t}{\Delta y})^2} <=
+    \frac{1}{\sqrt{2}},\\
+\end{equation}
+
+will be a necessary condition for the scheme to be stable. In practice, at the first resolution, it
+was found that the less stringent requirement of
+
+\begin{equation}
+    \label{eqn:cfl_lax} 
+    \sqrt{(\sqrt{g H} \frac{\Delta t}{\Delta x})^2 + (\sqrt{g H} \frac{\Delta t}{\Delta y})^2} <=
+    1\\
+\end{equation}
+
+was necessary to ensure numerical stability (from empirical experimentation). The first CFL
+criterion will be referred to as the strict criterion, and the second the lax criterion. In light of
+this, in this task $\Delta t$ was taken to be \SI{139}{s} so as to just satisfy this lax criterion.
+Satisfying the lax criterion allows for a larger timestep and therefore less time is needed to run
+the simulations.
 
 \begin{figure}[ht!]
     \centering
@@ -161,7 +180,7 @@ allows for a larger timestep and therefore less time is needed to run the simula
 % Say something about Rossby radius of deformation and link to spatial resolution.
 % Justify timestep/etc.
 
-The model was run for one day, and various plots of $u$, $v$ and $\eta$ are shown in Figure
+The model was run for one day, and various plots of $u$, $v$ and $\eta$ are shown in Fig.
 \ref{fig:task_a}. Overall, an anti-clockwise gyre is set up, as can be seen in plots (a) and (b)
 because $u$ is negative along the southern boundary, and $v$ is positive along the western boundary.
 Plot (d) shows that the height perturbation, $\eta$, is almost symmetrical after one day, although
@@ -180,34 +199,44 @@ energy (term three):
 
 % TODO: CFL.
 This can be approximated over the domain using Simpson's rule in 2D. This can then be calculated for
-every timestep, as is shown in Figure \ref{fig:task_b_energy}. For this figure, the model was run at
+every timestep, as is shown in Fig. \ref{fig:task_b_energy}. For this figure, the model was run at
 two resolutions: once as before with $\Delta x = \Delta y = 10\, km$ , and once with $\Delta x =
-\Delta y = 10\, km$ (i.e. twice the spatial resolution). A time step of $\Delta t = 30\, s$ was use
-in both cases, so that the strict CFL criterion is still satisfied for the high resolution run and
+\Delta y = 10\, km$ (i.e. twice the spatial resolution). A time step of $\Delta t = 49\, s$ was use
+in both cases, so that the strict CFL criterion is just satisfied for the high resolution run and
 that only changes in the spatial resolution are being compared between the two runs. (It was found
 that running the model at the higher resolution with only the lax criterion being satisfied lead to
 numerical instability after around \SI{50}{days}.) The model was run for 100 days in each case, and
 it can be seen that the energy reaches a peak at around \SI{35}{days} before reducing by
-2.05\%(1.26\%) for $\Delta x = 20$ \SI{}{km} ($\Delta x = 10$ \SI{}{km}) over the next
+2.05\%(1.27\%) for $\Delta x = 20$ \SI{}{km} ($\Delta x = 10$ \SI{}{km}) over the next
 \SI{65}{days}.
 
 \section*{Task C}
 
-% Run these with same dt.
 Given that the energy in the model is approximately constant after \SI{100}{days}, it can be
-compared to the steady state analytical solution as found in (XXX Musgrave). The only unknown in
-these equations is the value of $\eta_0$, for which the modelled value of $\eta(0, \frac{L}{2})$ is
-used. One way of doing these comparisons is to work out the perturbations of $u$, $v$ and $\eta$ as
-defined by e.g. $u' = u - u_{st}$, then calculating the energy difference using Equation
-\ref{eqn:energy} - $E(u', v', \eta')$. Using this equation, when $\Delta x = 20$ \SI{}{km}, the
-total energy difference between the analytical and the modelled steady state solution is
-\SI{18.4}{TJ}, and when $\Delta x = 10$ \SI{}{km}, the total energy difference is \SI{4.98}{TJ}.
+compared to the steady state analytical solution as found in \textcite{musgrave1985numerical}. The
+only unknown in these equations is the value of $\eta_0$, for which the modelled value of $\eta(0,
+\frac{L}{2})$ is used. One way of doing these comparisons is to work out the perturbations of $u$,
+$v$ and $\eta$ as defined by e.g. $u' = u - u_{st}$, then calculating the energy difference using
+Equation \ref{eqn:energy} - $E(u', v', \eta')$. Using this equation, when $\Delta x = 20$ \SI{}{km},
+the total energy difference between the analytical and the modelled steady state solution is
+\SI{18.4}{TJ}, and when $\Delta x = 10$ \SI{}{km}, the total energy difference is \SI{4.99}{TJ}.
 Therefore, increasing the resolution increases the accuracy of the modelled steady state solution.
 The 2\ts{nd} order spatial accuracy of the 2D SWE numerical model on an Arakawa-C grid can be seen
 from the fact that when the resolution is doubled, the error, as measured by the total energy
 difference, is approximately four times smaller. 
 
-\section*{Task C}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=300px]{figures/task_b_energy}
+    \caption{The effect of spatial resolution on the total energy of the system. Doubling the
+    spatial resolution (blue curve) increases the overall energy of the system. It also reduces the
+energy difference between the analytical steady state solution and the steady state obtained by
+running the SWE model for 100 days.}
+    \label{fig:task_b_energy}
+\end{figure}
+
+
+\section*{Task D}
 
 One way of solving a non-linear version of the SWE equations is to implement a semi-Lagrangian
 numerical scheme. Here the full Lagrangian rates of change ($\frac{D}{Dt}$ as opposed to
@@ -230,7 +259,7 @@ departure point using the following formulae:
     t^{n+\frac{1}{2}}) \Delta t.\\
 \end{align}
 
-The departure points tell us where to take the values of $u$, $v$ and $\eta$ from in the previous
+The departure points tell us where to take the values of $u$, $v$ and $\eta$ from the previous
 timestep. However, it is unlikely that these departure points will lie on grid-points, therefore it
 is necessary to interpolate between the values of these three fields to calculate the values at the
 departure points. This is achieved using the \lstinline[basicstyle=\ttfamily]|RectBivariateSpline|
@@ -241,23 +270,42 @@ by using the value of the nearest point in the domain of interpolation, which is
 study. Once the departure points have been calculated for the three grids, the same forward-backward
 time scheme used before is used to update the three fields. 
 
+A comparison of the two schemes can be seen if Fig. \ref{fig:task_d_eta}, which shows plots of
+$\eta$ for both schemes run with $\Delta x = \Delta y = $ \SI{20}{km}, and $\Delta t = $
+\SI{139}{s}, after \SI{1}{day} and \SI{50}{days}. The two schemes are clearly very similar, with
+almost identical magnitudes for $\eta$ after both time periods. However, the semi-Lagrangian scheme
+is less symmetrical after \SI{50}{days}, which may be due to the fact that the equations that it is
+solving are the non-linear counterparts to the equations solved by the first scheme.
 
 \begin{figure}[ht!]
     \centering
-    \includegraphics[width=300px]{figures/task_b_energy}
-    \caption{The effect of spatial resolution on the total energy of the system. Doubling the
-    spatial resolution (blue curve) increases the overall energy of the system. It also reduces the
-energy difference between the analytical steady state solution and the steady state obtained by
-running the SWE model for 100 days.}
-    \label{fig:task_b_energy}
+    \includegraphics[width=300px]{figures/task_d_eta}
+    \caption{Contour plots of $\eta$ for the original Eulerian scheme ((a) and (c)), and the
+	semi-Lagrangian scheme ((b) and (d)) after \SI{1}{day} and \SI{50}{days}.}
+    \label{fig:task_d_eta}
 \end{figure}
+
+Finally, the total energy between the original Eulerian scheme and the semi-Lagrangian scheme can be
+compared, as is done in Fig. \ref{fig:task_d_energy}. Here, the two schemes are run again with the
+above settings for \SI{50}{days}. The two schemes give very similar energies throughout the run,
+with the semi-Lagrangian scheme having a consistently slightly higher energy, perhaps due to the
+asymmetries from the non-linearity noted above.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=300px]{figures/task_d_energy}
+    \caption{The total energy at each time for the original Eulerian scheme and the semi-Lagrangian
+    scheme.}
+    \label{fig:task_d_energy}
+\end{figure}
+
+
+\printbibliography[title={References}]
 
 \section*{Appendix A}
 
 All code can be downloaded from the following link:
 
 https://github.com/markmuetz/mtmw14
-
-\end{document}
 
 \end{document}

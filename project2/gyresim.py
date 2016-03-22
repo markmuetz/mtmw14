@@ -48,6 +48,11 @@ def energy(eta, u, v, rho, H, g, x, y):
     return E
 
 
+def calc_c(g, H, dt, dx, dy):
+    c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
+    c = np.sqrt(c_x**2 + c_y**2)
+    return c
+
 def gyre_sim_semi_lag(t0, timelength, dt, dx, dy, 
                       f0, B, g, gamma, rho, H, tau0, L, 
                       plot, plot_timestep):
@@ -83,8 +88,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
     X_v, Y_v = np.meshgrid(x_v, y_v, indexing='ij')
 
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
-    c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
-    c = np.sqrt(c_x**2 + c_y**2)
+    c = calc_c(g, h, dt, dx, dy)
     print('c={}'.format(c))
     if c > 1.0:
         print('Warning, running with c={} (>1.0)'.format(c))
@@ -192,7 +196,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
         Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
         if i % 100 == 0:
-            print('{}: energy={}'.format(t, Es[-1]))
+            print('{}: energy={}'.format(t / 86400, Es[-1]))
             if plot:
                 plot_timestep(X, Y, u_grid, v_grid)
 
@@ -270,7 +274,7 @@ def gyre_sim(t0, timelength, dt, dx, dy,
         Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
         if i % 1000 == 0:
-            print('{}: energy={}'.format(t, Es[-1]))
+            print('{}: energy={}'.format(t / 86400, Es[-1]))
             if plot:
                 plot_timestep(X, Y, u_grid, v_grid)
 
