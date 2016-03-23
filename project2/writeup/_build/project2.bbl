@@ -28,6 +28,9 @@
         {{uniquename=0,hash=26be1e17055a784000141d1625ea2296}{Beckers}{B\bibinitperiod}{J-M}{J\bibinithyphendelim M\bibinitperiod}{}{}{}{}}%
         {{uniquename=0,hash=28b12374ac51d72e773d70761e17fc6f}{Deleersnijder}{D\bibinitperiod}{E}{E\bibinitperiod}{}{}{}{}}%
       }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
       \strng{namehash}{0289ba29c36c31cf930c0716a67dc5dd}
       \strng{fullhash}{0289ba29c36c31cf930c0716a67dc5dd}
       \field{sortinit}{B}
@@ -37,7 +40,9 @@
       \field{journaltitle}{Journal of computational physics}
       \field{number}{1}
       \field{title}{Stability of a FBTCS scheme applied to the propagation of shallow-water inertia-gravity waves on various space grids}
+      \field{volume}{108}
       \field{year}{1993}
+      \field{pages}{95\bibrangedash 104}
     \endentry
     \entry{musgrave1985numerical}{article}{}
       \name{labelname}{1}{}{%

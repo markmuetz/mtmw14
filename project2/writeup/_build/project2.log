@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  22 MAR 2016 21:52
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.7.29)  23 MAR 2016 23:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1071,30 +1071,30 @@ Package pdftex.def Info: figures/task_a.png used on input line 174.
 File: figures/task_b_energy.png Graphic file (type png)
 
 <use figures/task_b_energy.png>
-Package pdftex.def Info: figures/task_b_energy.png used on input line 230.
+Package pdftex.def Info: figures/task_b_energy.png used on input line 231.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
  [4 <./figures/task_b_energy.png>]
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 265.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 266.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-<figures/task_d_eta.png, id=32, 578.16pt x 433.62pt>
+<figures/task_d_eta.png, id=31, 578.16pt x 433.62pt>
 File: figures/task_d_eta.png Graphic file (type png)
 
 <use figures/task_d_eta.png>
-Package pdftex.def Info: figures/task_d_eta.png used on input line 282.
+Package pdftex.def Info: figures/task_d_eta.png used on input line 291.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
-
-<figures/task_d_energy.png, id=33, 578.16pt x 433.62pt>
+ [5 <./figures/task_d_eta.png>]
+<figures/task_d_energy.png, id=40, 578.16pt x 433.62pt>
 File: figures/task_d_energy.png Graphic file (type png)
 
 <use figures/task_d_energy.png>
-Package pdftex.def Info: figures/task_d_energy.png used on input line 296.
+Package pdftex.def Info: figures/task_d_energy.png used on input line 305.
 (pdftex.def)             Requested size: 301.1261pt x 225.84099pt.
- [5 <./figures/task_d_eta.png>] [6 <./figures/task_d_energy.png>] (_build/proje
-ct2.aux)
+ [6 <./figures/task_d_energy.png>]
+(_build/project2.aux)
 Package logreq Info: Writing requests to 'project2.run.xml'.
 \openout1 = `project2.run.xml'.
 
@@ -1106,7 +1106,7 @@ Here is how much of TeX's memory you used:
  21017 multiletter control sequences out of 15000+600000
  9726 words of font info for 36 fonts, out of 8000000 for 9000
  80 hyphenation exceptions out of 8191
- 43i,16n,52p,10421b,953s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,16n,52p,10421b,920s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy7.pfb></usr/share/texlive
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf
@@ -1121,7 +1121,7 @@ cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb>
-Output written on _build/project2.pdf (6 pages, 417294 bytes).
+Output written on _build/project2.pdf (6 pages, 417656 bytes).
 PDF statistics:
  91 PDF objects out of 1000 (max. 8388607)
  58 compressed objects within 1 object stream

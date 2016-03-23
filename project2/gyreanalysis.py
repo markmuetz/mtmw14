@@ -1,7 +1,6 @@
 import pylab as plt
 import numpy as np
 
-from gyresim import init_settings, analytical_steady_state
 
 def analyse_one_day_result(result):
     # After 1 day:
@@ -37,26 +36,27 @@ def analyse_one_day_result(result):
     ax4.yaxis.tick_right()
     ax4.yaxis.set_label_position("right")
 
-    plt.savefig('figures/task_a.png')
+    plt.savefig('writeup/figures/task_a.png')
 
 def analyse_diff_res(res1, res2):
     plt.figure(95)
     plt.clf()
     #plt.title('Energy vs time')
     f, (ax1, ax2) = plt.subplots(2, 1)
-    ax1.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4]) / 1e15, 
+    f.subplots_adjust(hspace=0.25)
+    ax1.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4][:-1]) / 1e15, 
              label=res1['res'])
-    ax1.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4]) / 1e15, 
+    ax1.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4][:-1]) / 1e15, 
              label=res2['res'])
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('energy (PJ)')
     ax1.legend(loc='lower right')
 
-    ax2.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4]) / 1e15, 
+    ax2.plot(res1['sim'][0] / 86400, np.array(res1['sim'][4][:-1]) / 1e15, 
              label=res1['res'])
-    ax2.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4]) / 1e15, 
+    ax2.plot(res2['sim'][0] / 86400, np.array(res2['sim'][4][:-1]) / 1e15, 
              label=res2['res'])
-    ax2.set_xlim((30, 100))
+    ax2.set_xlim((60, 200))
     ax2.set_ylim((2.65, 2.85))
     ax2.set_xlabel('time (days)')
     ax2.set_ylabel('energy (PJ)')
@@ -65,11 +65,17 @@ def analyse_diff_res(res1, res2):
 
     pd1 = (np.array(res1['sim'][4]).max() - res1['sim'][4][-1] ) / np.array(res1['sim'][4]).max() * 100
     pd2 = (np.array(res2['sim'][4]).max() - res2['sim'][4][-1] ) / np.array(res2['sim'][4]).max() * 100
-    print('% diff 1 {}'.format(pd1))
-    print('% diff 2 {}'.format(pd2))
+    print('% diff max 1 {}'.format(pd1))
+    print('% diff max 2 {}'.format(pd2))
 
+    l1 = len(res1['sim'][4])
+    pd3 = (res1['sim'][4][7 * l1 / 10] - res1['sim'][4][-1] ) / res1['sim'][4][-1] * 100
+    pd4 = (res2['sim'][4][7 * l1 / 10] - res2['sim'][4][-1] ) / res2['sim'][4][-1] * 100
+    #pd2 = (np.array(res2['sim'][4]).max() - res2['sim'][4][-1] ) / np.array(res2['sim'][4]).max() * 100
+    print('% diff 70 day 1 {}'.format(pd3))
+    print('% diff 70 day 2 {}'.format(pd4))
 
-    plt.savefig('figures/task_b_energy.png')
+    plt.savefig('writeup/figures/task_b_energy.png')
 
 
 def analyse_diff_res2(res1, res2, res3, res4):
@@ -77,6 +83,7 @@ def analyse_diff_res2(res1, res2, res3, res4):
     plt.clf()
     #plt.title('Energy vs time')
     f, (ax1, ax2) = plt.subplots(2, 1)
+    f.subplots_adjust(hspace=0.25)
     ax1.plot(res3['sim'][0] / 86400, np.array(res3['sim'][4]) / 1e15, 
              label='Eulerian')
     ax1.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
@@ -89,8 +96,8 @@ def analyse_diff_res2(res1, res2, res3, res4):
              label='Eulerian')
     ax2.plot(res4['sim'][0] / 86400, np.array(res4['sim'][4]) / 1e15, 
              label='semi-Lagrangian')
-    ax2.set_xlim((30, 50))
-    ax2.set_ylim((2.65, 2.85))
+    ax2.set_xlim((60, 100))
+    ax2.set_ylim((2.65, 2.75))
     ax2.set_xlabel('time (days)')
     ax2.set_ylabel('energy (PJ)')
 
@@ -102,23 +109,23 @@ def analyse_diff_res2(res1, res2, res3, res4):
     print('% diff 1 {}'.format(pd1))
     print('% diff 2 {}'.format(pd2))
 
-    plt.savefig('figures/task_d_energy.png')
+    plt.savefig('writeup/figures/task_d_energy.png')
 
     f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     f.subplots_adjust(hspace=0.25, wspace=0.25, right=0.8)
 
     X, Y = res1['grid']
     ax1.set_title('(a) $\eta$ after 1 day - Eul.')
-    ax1.contourf(X/1e3, Y/1e3, res1['sim'][1], 100, vmin=-0.02, vmax=0.02)
+    ax1.contourf(X/1e3, Y/1e3, res1['sim'][1], 100, vmin=-0.01, vmax=0.01)
     ax2.set_title('(b) $\eta$ after 1 day - S-L')
-    cf2 = ax2.contourf(X/1e3, Y/1e3, res2['sim'][1], 100, vmin=-0.02, vmax=0.02)
+    cf2 = ax2.contourf(X/1e3, Y/1e3, res2['sim'][1], 100, vmin=-0.01, vmax=0.01)
 
     cbar_ax1 = f.add_axes([0.85, 0.55, 0.05, 0.4])
     f.colorbar(cf2, cax=cbar_ax1)
 
-    ax3.set_title('(c) $\eta$ after 50 day - Eul.')
+    ax3.set_title('(c) $\eta$ after 100 days - Eul.')
     ax3.contourf(X/1e3, Y/1e3, res3['sim'][1], 100, vmin=-0.15, vmax=0.2)
-    ax4.set_title('(d) $\eta$ after 50 days - S-L')
+    ax4.set_title('(d) $\eta$ after 100 days - S-L')
     cf4 = ax4.contourf(X/1e3, Y/1e3, res4['sim'][1], 100, vmin=-0.15, vmax=0.2)
 
     ax3.set_xlabel('x (km)') 
@@ -128,47 +135,26 @@ def analyse_diff_res2(res1, res2, res3, res4):
 
     cbar_ax2 = f.add_axes([0.85, 0.05, 0.05, 0.4])
     f.colorbar(cf4, cax=cbar_ax2)
-    plt.savefig('figures/task_d_eta.png')
+    plt.savefig('writeup/figures/task_d_eta.png')
 
-def calc_analytical():
-    settings = init_settings()
-    L = settings['L']
-    settings['plot'] = True
-    nx = 20
-    ny = nx
-    x = np.linspace(0, L, nx)
-    y = np.linspace(0, L, ny)
-    dx = x[1] - x[0]
-    dy = y[1] - y[0]
-
-    X, Y = np.meshgrid(x, y, indexing='ij')
-
-    eta0 = np.zeros_like(X)
-    u0 = np.zeros((X.shape[0] + 1, X.shape[1]))
-    v0 = np.zeros((X.shape[0], X.shape[1] + 1))
-
-    eta_st, u_st, v_st = plot_analytical(0, X, Y, **settings)
-
-def plot_analytical(eta0, X, Y, **settings):
-    eta_st, u_st, v_st = analytical_steady_state(eta0=eta0, X=X, Y=Y, **settings)
-    if settings['plot']:
-        plt.figure(21)
-        plt.clf()
-        plt.title('u')
-        cs = plt.contour(X, Y, u_st)
-        plt.clabel(cs, inline=1, fontsize=10)
-        plt.figure(22)
-        plt.clf()
-        plt.title('v')
-        cs = plt.contour(X, Y, v_st)
-        plt.figure(23)
-        plt.clabel(cs, inline=1, fontsize=10)
-        plt.clf()
-        plt.quiver(X[::5, ::5], Y[::5, ::5], u_st[::5, ::5], v_st[::5, ::5])
-        plt.figure(24)
-        plt.clf()
-        plt.contourf(X, Y, eta_st, 100)
-        plt.colorbar()
+def plot_analytical(X, Y, eta_st, u_st, v_st):
+    plt.figure(21)
+    plt.clf()
+    plt.title('u')
+    cs = plt.contour(X, Y, u_st)
+    plt.clabel(cs, inline=1, fontsize=10)
+    plt.figure(22)
+    plt.clf()
+    plt.title('v')
+    cs = plt.contour(X, Y, v_st)
+    plt.figure(23)
+    plt.clabel(cs, inline=1, fontsize=10)
+    plt.clf()
+    plt.quiver(X[::5, ::5], Y[::5, ::5], u_st[::5, ::5], v_st[::5, ::5])
+    plt.figure(24)
+    plt.clf()
+    plt.contourf(X, Y, eta_st, 100)
+    plt.colorbar()
 
     return eta_st, u_st, v_st
 
@@ -206,20 +192,20 @@ def arakawa_c_figure(m=6, n=6, L=1e3):
     plt.legend(numpoints=1, bbox_to_anchor=[1.05, 1.1])
 
     for i in range(m):
-	for j in range(n):
-	    plt.plot(dx * i, dy * j, 'kx')
+        for j in range(n):
+            plt.plot(dx * i, dy * j, 'kx')
     for i in range(m + 1):
-	for j in range(n):
-	    if i == 0 or i == m:
-		fmt = 'ro'
-	    else:
-		fmt = 'ko'
-	    plt.plot(dx * (i - 0.5), dy * j, fmt)
+        for j in range(n):
+            if i == 0 or i == m:
+                fmt = 'ro'
+            else:
+                fmt = 'ko'
+            plt.plot(dx * (i - 0.5), dy * j, fmt)
     for i in range(m):
-	for j in range(n + 1):
-	    if j == 0 or j == m:
-		fmt = 'r^'
-	    else:
-		fmt = 'k^'
-	    plt.plot(dx * i, dy * (j - 0.5), fmt)
-    plt.savefig('figures/arakawa_c_grid.png')
+        for j in range(n + 1):
+            if j == 0 or j == m:
+                fmt = 'r^'
+            else:
+                fmt = 'k^'
+            plt.plot(dx * i, dy * (j - 0.5), fmt)
+    plt.savefig('writeup/figures/arakawa_c_grid.png')

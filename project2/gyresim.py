@@ -8,13 +8,8 @@ import numpy as np
 import scipy.interpolate as interp
 from scipy.integrate import simps
 
-
-jitenabled = False
-try:
-    from numba.decorators import jit, autojit                             
-except ImportError:
-    autojit = None
-    print('numba not availaible')
+from gyreresults import ResultsManager
+from gyreanalysis import plot_timestep
 
 
 def init_settings(**kwargs):
@@ -41,21 +36,67 @@ def init_settings(**kwargs):
 
 
 def energy(eta, u, v, rho, H, g, x, y):
-    #dx, dy = x[1] - x[0], y[1] - y[0]
-    #Eold = 0.5 * (rho * (H * (u**2 + v**2) + g * eta**2) * dx * dy).sum()
+    'Calculate the energy from equation (12) in writup'
     Ez =  0.5 * (rho * (H * (u**2 + v**2) + g * eta**2))
     E = simps(simps(Ez, y), x) # 2d integration using Simpson's rule.
     return E
 
 
 def calc_c(g, H, dt, dx, dy):
+    'Calculate c (CFL criterion) from equation (10) in writup'
     c_x, c_y = np.sqrt(g * H) * dt/dx, np.sqrt(g * H) * dt/dy
     c = np.sqrt(c_x**2 + c_y**2)
     return c
 
+
+def run_tasks(run_controls):
+    'Run tasks defined by run_controls, using saved results if they already exist'
+    rm = ResultsManager()
+    settings = init_settings()
+    settings['plot'] = True
+
+    results = OrderedDict()
+    for task, mode, timelength, dx, dt in run_controls:
+        dy = dx
+        key = '{}:{}-{}-{}x{}'.format(mode, timelength, dt, dx, dy)
+        if mode == 'gyre_sim':
+            sim = gyre_sim
+        elif mode == 'gyre_sim_semi_lag':
+            sim = gyre_sim_semi_lag
+
+        if rm.exists(key):
+            result = rm.get(key)
+        else:
+            X, Y, times, eta, u, v, Es = sim(0, timelength, dt, dx, dy, 
+                                             plot_timestep=plot_timestep, **settings)
+
+            eta_st, u_st, v_st = analytical_steady_state(eta[0, eta.shape[1]/2], X, Y, **settings)
+
+            u_grid = (u[:-1, :] + u[1:, :]) / 2
+            v_grid = (v[:, :-1] + v[:, 1:]) / 2
+
+            up = u_grid - u_st
+            vp = v_grid - v_st
+            etap = eta - eta_st
+            E_diff = energy(etap, up, vp, settings['rho'], settings['H'], settings['g'], X[:, 0], Y[0, :])
+            result = {}
+            result['sim'] = (times, eta, u, v, Es)
+            result['ana'] = (eta_st, u_st, v_st)
+            result['res'] = 'energy_{}x{}'.format(dx, dy)
+            result['grid'] = (X, Y)
+            result['energy_diff'] = E_diff
+
+            rm.save(key, result)
+
+        results[key] = result
+    return results
+
+
 def gyre_sim_semi_lag(t0, timelength, dt, dx, dy, 
                       f0, B, g, gamma, rho, H, tau0, L, 
                       plot, plot_timestep):
+    'Solve SWEs using semi-Lagrangian method on Arakawa-C grid'
+    # Set up fields.
     nx = L / dx + 1
     ny = nx
 
@@ -88,7 +129,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
     X_v, Y_v = np.meshgrid(x_v, y_v, indexing='ij')
 
     print('dx={}, dy={}, dt={}'.format(dx, dy, dt))
-    c = calc_c(g, h, dt, dx, dy)
+    c = calc_c(g, H, dt, dx, dy)
     print('c={}'.format(c))
     if c > 1.0:
         print('Warning, running with c={} (>1.0)'.format(c))
@@ -104,66 +145,67 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
 
     u_prev = u.copy()
     v_prev = v.copy()
-    for i, t in enumerate(times[1:]):
-        # Ensure 2nd order accuracy by calc'ing u, v at 1/2 timestep.
-        # Uses 
-        # Work out u, v, at n+1/2.
-        u0p5 = 1.5 * u - 0.5 * u_prev
-        v0p5 = 1.5 * v - 0.5 * v_prev
-
-        u_prev = u.copy()
-        v_prev = v.copy()
-
-        # Calc intermediate x, y.
-        u_grid = (u[:-1, :] + u[1:, :]) / 2
-        v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Xi = X - u_grid * dt/2
-        Yi = Y - v_grid * dt/2
-
-	v_u[1:-1, :] = (v[:-1, :-1] + v[1:, :-1] +
-			v[:-1, 1:] + v[1:, 1:]) / 4
-	u_v[:, 1:-1] = (u[:-1, :-1] + u[1:, :-1] +
-			u[:-1, 1:] + u[1:, 1:]) / 4
-        Xi_u = X_u - u * dt/2
-        Yi_u = Y_u - v_u * dt/2
-
-        Xi_v = X_v - u_v * dt/2
-        Yi_v = Y_v - v * dt/2
-
-        # Work out interp'd u, v at n+1/2
-        # Interp. handles values outside domain naturally
-        ui0p5 = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi, Yi)
-        vi0p5 = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi, Yi)
-
-        ui0p5_u = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_u, Yi_u)
-        vi0p5_u = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_u, Yi_u)
-
-        ui0p5_v = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_v, Yi_v)
-        vi0p5_v = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_v, Yi_v)
-
-        # Calc x dep at n
-        Xd = X - ui0p5 * dt
-        Yd = Y - vi0p5 * dt
-
-        Xd_u = X_u - ui0p5_u * dt
-        Yd_u = Y_u - vi0p5_u * dt
-
-        Xd_v = X_v - ui0p5_v * dt
-        Yd_v = Y_v - vi0p5_v * dt
-
-        u_tilde = interp.RectBivariateSpline(x_u, y_u, u).ev(Xd_u, Yd_u)
-        v_tilde = interp.RectBivariateSpline(x_v, y_v, v).ev(Xd_v, Yd_v)
-        eta_tilde = interp.RectBivariateSpline(x, y, eta).ev(Xd, Yd)
-        
-        dudx = (u[1:, :] - u[:-1, :]) / dx
-        dvdy = (v[:, 1:] - v[:, :-1]) / dy
-        dudx_tilde = interp.RectBivariateSpline(x, y, dudx).ev(Xd, Yd)
-        dvdy_tilde = interp.RectBivariateSpline(x, y, dvdy).ev(Xd, Yd)
-
-        # Check whether H -> H + eta.
-        eta = eta_tilde - H * dt * (dudx_tilde + dvdy_tilde)
+    for i, t in enumerate(times[1::2]):
 
         for j in range(2):
+	    # Ensure 2nd order accuracy by calc'ing u, v at 1/2 timestep.
+	    # Work out u, v, at n+1/2.
+	    u0p5 = 1.5 * u - 0.5 * u_prev
+	    v0p5 = 1.5 * v - 0.5 * v_prev
+
+	    u_prev = u.copy()
+	    v_prev = v.copy()
+
+	    # Calc intermediate x, y.
+	    u_grid = (u[:-1, :] + u[1:, :]) / 2
+	    v_grid = (v[:, :-1] + v[:, 1:]) / 2
+	    Xi = X - u_grid * dt/2
+	    Yi = Y - v_grid * dt/2
+
+	    v_u[1:-1, :] = (v[:-1, :-1] + v[1:, :-1] +
+			    v[:-1, 1:] + v[1:, 1:]) / 4
+	    u_v[:, 1:-1] = (u[:-1, :-1] + u[1:, :-1] +
+			    u[:-1, 1:] + u[1:, 1:]) / 4
+	    Xi_u = X_u - u * dt/2
+	    Yi_u = Y_u - v_u * dt/2
+
+	    Xi_v = X_v - u_v * dt/2
+	    Yi_v = Y_v - v * dt/2
+
+	    # Work out interp'd u, v at n+1/2
+	    # Interp. handles values outside domain naturally
+	    ui0p5 = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi, Yi)
+	    vi0p5 = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi, Yi)
+
+	    ui0p5_u = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_u, Yi_u)
+	    vi0p5_u = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_u, Yi_u)
+
+	    ui0p5_v = interp.RectBivariateSpline(x_u, y_u, u0p5).ev(Xi_v, Yi_v)
+	    vi0p5_v = interp.RectBivariateSpline(x_v, y_v, v0p5).ev(Xi_v, Yi_v)
+
+	    # Calc x dep at n
+	    Xd = X - ui0p5 * dt
+	    Yd = Y - vi0p5 * dt
+
+	    Xd_u = X_u - ui0p5_u * dt
+	    Yd_u = Y_u - vi0p5_u * dt
+
+	    Xd_v = X_v - ui0p5_v * dt
+	    Yd_v = Y_v - vi0p5_v * dt
+
+	    # Calc u, v, eta at dep points.
+	    u_tilde = interp.RectBivariateSpline(x_u, y_u, u).ev(Xd_u, Yd_u)
+	    v_tilde = interp.RectBivariateSpline(x_v, y_v, v).ev(Xd_v, Yd_v)
+	    eta_tilde = interp.RectBivariateSpline(x, y, eta).ev(Xd, Yd)
+	    
+	    dudx = (u[1:, :] - u[:-1, :]) / dx
+	    dvdy = (v[:, 1:] - v[:, :-1]) / dy
+	    dudx_tilde = interp.RectBivariateSpline(x, y, dudx).ev(Xd, Yd)
+	    dvdy_tilde = interp.RectBivariateSpline(x, y, dvdy).ev(Xd, Yd)
+
+	    eta = eta_tilde - H * dt * (dudx_tilde + dvdy_tilde)
+
+	    # Update u, v, eta (switching u, v calc.).
             if (i + j) % 2 == 0:
                 v_u[1:-1, :] = (v_tilde[:-1, :-1] + v_tilde[1:, :-1] +
 				v_tilde[:-1, 1:] + v_tilde[1:, 1:]) / 4
@@ -176,7 +218,7 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
                               + tau_x[1:-1, :] * dt / (rho * H))
             else:
                 u_v[:, 1:-1] = (u_tilde[:-1, :-1] + u_tilde[1:, :-1] +
-			        u_tilde[:-1, 1:] + u_tilde[1:, 1:]) / 4
+				u_tilde[:-1, 1:] + u_tilde[1:, 1:]) / 4
                 deta_dy_v = (eta[:, 1:] - eta[:, :-1]) / dy
 
 		v[:, 1:-1] = (+ v_tilde[:, 1:-1]
@@ -191,9 +233,9 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
             v[:, 0] = 0
             v[:, -1] = 0
 
-        u_grid = (u[:-1, :] + u[1:, :]) / 2
-        v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
+	    u_grid = (u[:-1, :] + u[1:, :]) / 2
+	    v_grid = (v[:, :-1] + v[:, 1:]) / 2
+	    Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
         if i % 100 == 0:
             print('{}: energy={}'.format(t / 86400, Es[-1]))
@@ -206,6 +248,8 @@ def gyre_sim_semi_lag(t0, timelength, dt, dx, dy,
 def gyre_sim(t0, timelength, dt, dx, dy, 
              f0, B, g, gamma, rho, H, tau0, L, 
              plot, plot_timestep):
+    'Solve SWEs using Eulerian method on Arakawa-C grid'
+    # Set up fields.
     nx = L / dx + 1
     ny = nx
 
@@ -242,7 +286,7 @@ def gyre_sim(t0, timelength, dt, dx, dy,
     v_grid = (v[:, :-1] + v[:, 1:]) / 2
     Es = [energy(eta, u_grid, v_grid, rho, H, g, x, y)]
 
-    for i, t in enumerate(times[1:]):
+    for i, t in enumerate(times[1::2]):
         eta = eta - H * dt * ((u[1:, :] - u[:-1, :]) / dx + 
                               (v[:, 1:] - v[:, :-1]) / dy)
         for j in range(2):
@@ -269,9 +313,9 @@ def gyre_sim(t0, timelength, dt, dx, dy,
             v[:, 0] = 0
             v[:, -1] = 0
 
-        u_grid = (u[:-1, :] + u[1:, :]) / 2
-        v_grid = (v[:, :-1] + v[:, 1:]) / 2
-        Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
+	    u_grid = (u[:-1, :] + u[1:, :]) / 2
+	    v_grid = (v[:, :-1] + v[:, 1:]) / 2
+	    Es.append(energy(eta, u_grid, v_grid, rho, H, g, x, y))
 
         if i % 1000 == 0:
             print('{}: energy={}'.format(t / 86400, Es[-1]))
@@ -282,6 +326,7 @@ def gyre_sim(t0, timelength, dt, dx, dy,
 
 
 def analytical_steady_state(eta0, X, Y, L, f0, B, g, gamma, rho, H, tau0, plot):
+    'Calculate the steady state solution as in Musgrave 1985'
     epsilon = gamma / (L * B)
     a = (-1 - np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
     b = (-1 + np.sqrt(1 + (2 * np.pi * epsilon)**2)) / (2 * epsilon)
