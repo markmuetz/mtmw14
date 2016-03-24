@@ -1,3 +1,4 @@
+'''Plot all figures and perform analysis for writeup.'''
 import pylab as plt
 import numpy as np
 

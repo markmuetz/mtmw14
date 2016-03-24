@@ -69,22 +69,23 @@ with the sides being given by $L$.  The values used for the parameters were:
     \begin{tabular}{ c|r l } 
 	parameter & value & unit \\ 
 	\hline
-	$L$ & \SI{1e6}{} & \SI{}{m} \\
-	$H$ & \SI{1000}{} & \SI{}{m} \\ 
-	$f_0$ & \SI{1e-4}{} & \SI{}{s^{-1}} \\ 
-	$\beta$ & \SI{1e-11}{} & \SI{}{m^{-1} s^{-1}} \\ 
-	$g$ & \SI{10}{} & \SI{}{m s^{-2}} \\ 
-	$\gamma$ & \SI{1e-6}{} & \SI{}{s^{-1}} \\ 
-	$\rho$ & \SI{1000}{} & \SI{}{kg m^{-3}} \\ 
-	$\tau_x$ & $-cos(\frac{\pi y}{L})$ & \SI{}{kg s^{-2}} \\ 
-	$\tau_y$ & 0 & \SI{}{kg s^{-2}}  \\ 
+	$L$ & $10^6$ & \SI{}{m} \\
+	$H$ & $1000$ & \SI{}{m} \\ 
+	$f_0$ & $10^{-4}$ & \SI{}{s^{-1}} \\ 
+	$\beta$ & $10^{-11}$ & \SI{}{m^{-1} s^{-1}} \\ 
+	$g$ & 10 & \SI{}{m s^{-2}} \\ 
+	$\gamma$ & $10^{-6}$ & \SI{}{s^{-1}} \\ 
+	$\rho$ & 1000 & \SI{}{kg m^{-3}} \\ 
+	$\tau_x$ & $-cos(\frac{\pi y}{L})$ & \SI{}{N m^{-2}} \\ 
+	$\tau_y$ & 0 & \SI{}{N m^{-2}}  \\ 
     \end{tabular}
 \end{center}
 
-Following \textcite{beckers1993stability}, the SWEs are solved on an Arakawa-C grid using the
-forward-backward time scheme. The Arakawa-C grid was chosen so that e.g. spatial derivatives of $u$
-in the $x$ direction would be available at the points where $\eta$ is calculated. The domain is
-taken to be the size of the $\eta$ grid points, as can be seen in Fig.\ \ref{fig:arakawa_c_grid}.
+Following the method in \textcite{beckers1993stability}, the SWEs are solved on an Arakawa-C grid
+using the forward-backward time scheme. The Arakawa-C grid was chosen so that e.g. spatial
+derivatives of $u$ in the $x$ direction would be available at the points where $\eta$ is calculated.
+The Arakawa-C grid also has a good dispersion relationship for fine grids. The domain is taken to be
+the size of the $\eta$ grid points, as can be seen in Fig.\ \ref{fig:arakawa_c_grid}.
 
 \begin{figure}[ht!]
     \centering
@@ -184,7 +185,7 @@ The model was run for one day, and various plots of $u$, $v$ and $\eta$ are show
 \ref{fig:task_a}. Overall, an anti-clockwise gyre is set up, as can be seen in plots (a) and (b)
 because $u$ is negative along the southern boundary, and $v$ is positive along the western boundary.
 Plot (d) shows that the height perturbation, $\eta$, is almost symmetrical after one day, although
-anomalously low values can be seen in the northeast and southwest corners.
+anomalously low (magnitude) values can be seen in the northeast and southwest corners.
 
 \section*{Task B}
 
@@ -194,7 +195,7 @@ energy (term three):
 
 \begin{equation}
     \label{eqn:energy} 
-    E(u, v, \eta) = \int_0^L \int_0^L \frac{1}{2} \rho ( H ( u^2 + v^2) + g \eta^2) dx dy
+    E(u, v, \eta) = \int_0^L \int_0^L \frac{1}{2} \rho ( H ( u^2 + v^2) + g \eta^2) dx\, dy.
 \end{equation}
 
 % TODO: CFL.
@@ -272,12 +273,12 @@ study. Once the values of the $u$, $v$ and $\eta$ fields have been calculated at
 for the three grids, the same forward-backward time scheme used before is used to update the three
 fields. 
 
-Interestingly, the semi-Lagrangian scheme was found to be more unstable for larger values of $\Delta
-t$ than the Eulerian scheme empirically. That it should be unstable is to be expected:
-inertia-gravity waves will still provide a limit on its stability. (Although this can be removed by
-treating inertia-gravity waves semi-implicitly - not done in this study) It was found that running
-at a \SI{20}{km} resolution, a time resolution of \SI{75}{s} was necessary for the semi-Lagrangian
-scheme to be stable. This is used below.
+Interestingly, through empirical testing, the semi-Lagrangian scheme was found to be more unstable
+for larger values of $\Delta t$ than the Eulerian scheme. That it should be unstable is to be
+expected: inertia-gravity waves will still provide a limit on its stability. (Although this can be
+removed by treating inertia-gravity waves semi-implicitly - not done in this study.) It was found
+that running at a \SI{20}{km} resolution, a time resolution of \SI{75}{s} was necessary for the
+semi-Lagrangian scheme to be stable. This is used below.
 
 A comparison of the two schemes can be seen if Fig.\ \ref{fig:task_d_eta}, which shows plots of
 $\eta$ for both schemes run with $\Delta x = \Delta y = $ \SI{20}{km}, and $\Delta t = $

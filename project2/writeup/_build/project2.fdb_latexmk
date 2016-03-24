@@ -1,11 +1,11 @@
 # Fdb version 3
-["biber _build/project2"] 1458769122 "_build/project2.bcf" "_build/project2.bbl" "_build/project2" 1458775125
-  "_build/project2.bcf" 1458775125 91667 dc639cd2971e830b7ed563a8abd9abbb ""
+["biber _build/project2"] 1458769122 "_build/project2.bcf" "_build/project2.bbl" "_build/project2" 1458813423
+  "_build/project2.bcf" 1458813423 91667 dc639cd2971e830b7ed563a8abd9abbb ""
   "references.bib" 1458769120 725 46f6847fd0f291b63b138c83e63280cc ""
   (generated)
-  "_build/project2.bbl"
   "_build/project2.blg"
-["pdflatex"] 1458775124 "project2.tex" "_build/project2.pdf" "project2" 1458775125
+  "_build/project2.bbl"
+["pdflatex"] 1458813422 "project2.tex" "_build/project2.pdf" "project2" 1458813423
   "/etc/texmf/web2c/texmf.cnf" 1438191850 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -135,18 +135,18 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1392645748 31083 1dfd8bf685ce0009c40532fedf8a7c53 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1438191881 105562 46e478c1ef38c10b1485525bb94bb58e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1438191873 991554 a0c3f485ee5470d14382ad641f9f36d2 ""
-  "_build/project2.aux" 1458775125 2852 3902a68a614cf26bbe69054279c648fe ""
+  "_build/project2.aux" 1458813423 2852 3902a68a614cf26bbe69054279c648fe ""
   "_build/project2.bbl" 1458769123 3129 19edea324f0e5a9d704ed6921f9443fb "biber _build/project2"
-  "_build/project2.run.xml" 1458775125 2339 8e7bd72aeebbaef540683f831aec175d ""
-  "figures/arakawa_c_grid.png" 1458774793 26327 2d36dac5d4efa6f3335d0b3fb420389c ""
-  "figures/task_a.png" 1458774794 113292 a59c3a51b1a320b56934e2194f4db634 ""
-  "figures/task_b_energy.png" 1458774794 49716 408269f57f679343b3f99f759a50938e ""
-  "figures/task_d_energy.png" 1458774795 46951 78bf496bc7649e1693b396274ead2ba8 ""
-  "figures/task_d_eta.png" 1458774796 120055 8135677ab11724b9fd145b2de0178b2b ""
-  "project2.tex" 1458775096 16444 d50097ab4758993b763a3cf11b5ef5e0 ""
+  "_build/project2.run.xml" 1458813423 2339 8e7bd72aeebbaef540683f831aec175d ""
+  "figures/arakawa_c_grid.png" 1458813176 26327 2d36dac5d4efa6f3335d0b3fb420389c ""
+  "figures/task_a.png" 1458813177 113292 a59c3a51b1a320b56934e2194f4db634 ""
+  "figures/task_b_energy.png" 1458813178 49716 408269f57f679343b3f99f759a50938e ""
+  "figures/task_d_energy.png" 1458813179 46951 78bf496bc7649e1693b396274ead2ba8 ""
+  "figures/task_d_eta.png" 1458813180 120055 8135677ab11724b9fd145b2de0178b2b ""
+  "project2.tex" 1458812423 16532 a868322fdd3a5b9bda669bf016f1be0f ""
   (generated)
-  "_build/project2.aux"
+  "_build/project2.pdf"
   "_build/project2.log"
   "_build/project2.run.xml"
-  "_build/project2.pdf"
+  "_build/project2.aux"
   "_build/project2.bcf"

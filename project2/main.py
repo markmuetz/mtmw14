@@ -1,6 +1,4 @@
-from __future__ import division
-from collections import OrderedDict
-
+'''Main entry point for running all tasks'''
 import pylab as plt
 
 from gyresim import run_tasks
@@ -10,10 +8,11 @@ from gyreanalysis import (analyse_one_day_result, analyse_diff_res,
 
 if __name__ == '__main__':
     # plt.ion()
+    # Task, scheme, length, dx, dt
     run_controls = [('A', 'gyre_sim', 86400, 2e4, 139), 
                     ('C', 'gyre_sim', 86400 * 100, 2e4, 139),
                     ('C', 'gyre_sim', 86400 * 200, 2e4, 49),
-                    #('C', 'gyre_sim', 86400 * 100, 1e4, 69), # Unstable!
+                    #('C', 'gyre_sim', 86400 * 200, 1e4, 69), # Unstable! After 100 days.
 		    # N.B. This is stable, it meets the more
 		    # stringent stability requirements in Beckers and Deleersnijder.
                     ('C', 'gyre_sim', 86400 * 200, 1e4, 49), 
@@ -23,11 +22,9 @@ if __name__ == '__main__':
                     ('D', 'gyre_sim_semi_lag', 86400 * 100, 2e4, 75)]
     results = run_tasks(run_controls)
 
+    # Produce all figures.
     arakawa_c_figure()
-    # print('Analyse one day: {}'.format(results.keys()[0]))
     analyse_one_day_result(results.values()[0])
-    # print('Analyse 2 res: {}, {}'.format(results.keys()[2], results.keys()[3]))
     analyse_diff_res(results.values()[2], results.values()[3])
-    # print('Analyse 2 res: {}, {}'.format(results.keys()[0], results.keys()[4]))
     analyse_diff_res2(results.values()[4], results.values()[6], results.values()[5], results.values()[7])
 

@@ -1,3 +1,4 @@
+'''Useful class for saving/loading results'''
 import os
 import cPickle
 

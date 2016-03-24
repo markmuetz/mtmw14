@@ -1,6 +1,5 @@
-'''Systems supports gravity waves, this is the fastest thing in the sim, this
-will allow me to work out CFL conditions. This will be the phase speed of the
-gravity waves.'''
+'''Implementation of Eulerian and semi-Lagrangian schemes for SWEs on Arakawa-C grid.
+And supporting functions.'''
 from __future__ import division, print_function
 from collections import OrderedDict
 
